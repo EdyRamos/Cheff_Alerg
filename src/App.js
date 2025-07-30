@@ -1,10 +1,11 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import Register from './components/Register';
 import Profile from './components/Profile';
 import ModeSelect from './components/ModeSelect';
 import Tutorial from './components/Tutorial';
 import MemoryGame from './components/MemoryGame';
+import Intro from './components/Intro';
 
 /**
  * The top level application component.  It defines the routes
@@ -17,7 +18,7 @@ import MemoryGame from './components/MemoryGame';
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/register" />} />
+      <Route path="/" element={<Intro />} />
       <Route path="/register" element={<Register />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/modes" element={<ModeSelect />} />

@@ -83,10 +83,12 @@ class GameScene extends Phaser.Scene {
       this.add
         .text(sprite.x, sprite.y - 20, 'Alergênico!', { fontSize: '14px', fill: '#f00' })
         .setOrigin(0.5, 1);
+      this.difficulty.record(false);
     } else {
       // Acertou: ganha pontos.
       this.score += 10;
       this.scoreText.setText(`Pontuação: ${this.score}`);
+      this.difficulty.record(true);
 
       // Efeito de confete – um emitter já configurado no ato da criação.
       const emitter = this.add.particles('missing', {
@@ -114,8 +116,13 @@ class GameScene extends Phaser.Scene {
   }
 
   update(time) {
+    const params = this.difficulty.getParameters(
+      this.phaseConfig.spawnRate,
+      this.phaseConfig.simultaneous
+    );
+    this.spawnRate    = params.spawnRate;
+    this.simultaneous = params.simultaneous;
     this.spawnItem(time);
-    // Futuro: ajustar spawnRate e simultaneous via DifficultyManager
   }
 }
 
