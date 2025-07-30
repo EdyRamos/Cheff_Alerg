@@ -1,0 +1,52 @@
+# ===== Node / NPM / Yarn =====
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# ===== Build / Production =====
+build/
+dist/
+.DS_Store
+
+# ===== Env files / Secrets =====
+.env
+.env.*          # .env.local, .env.development, .env.production, etc.
+!.env.example  # opcional: manter exemplo de variáveis
+
+# ===== Logs / Reports =====
+logs/
+*.log
+coverage/
+*.lcov
+
+# ===== Phaser / Assets =====
+public/assets/images/*.psd
+public/assets/audio/*.wav
+# (opcional: ignore arquivos originais de design, como fontes Illustrator, PSD, etc.)
+
+# ===== VS Code =====
+.vscode/
+.history/
+
+# ===== JetBrains IDEs =====
+.idea/
+*.iml
+
+# ===== macOS =====
+.DS_Store
+
+# ===== Windows =====
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ===== Linux =====
+*~
+
+# ===== Misc =====
+.sass-cache/
+.cache/
+.tmp/

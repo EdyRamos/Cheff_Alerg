@@ -1,0 +1,27 @@
+{
+  "spawnRate": 1400,
+  "simultaneous": 3,
+  "items": [
+    {
+      "key": "cookie",
+      "spriteUrl": "/assets/images/cookie.png",
+      "bitmaskBit": 1
+    },
+    {
+      "key": "milk",
+      "spriteUrl": "/assets/images/milk.png",
+      "bitmaskBit": 0
+    },
+    {
+      "key": "bread",
+      "spriteUrl": "/assets/images/bread.png",
+      "bitmaskBit": 4,
+      "trap": true
+    },
+    {
+      "key": "cereal",
+      "spriteUrl": "/assets/images/cereal.png",
+      "bitmaskBit": 4
+    }
+  ]
+}

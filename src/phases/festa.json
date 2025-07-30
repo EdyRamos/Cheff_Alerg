@@ -1,0 +1,26 @@
+{
+  "spawnRate": 1000,
+  "simultaneous": 3,
+  "items": [
+    {
+      "key": "cake",
+      "spriteUrl": "/assets/images/cake.png",
+      "bitmaskBit": 1
+    },
+    {
+      "key": "icecream",
+      "spriteUrl": "/assets/images/icecream.png",
+      "bitmaskBit": 0
+    },
+    {
+      "key": "chocolate",
+      "spriteUrl": "/assets/images/chocolate.png",
+      "bitmaskBit": 2
+    },
+    {
+      "key": "candy",
+      "spriteUrl": "/assets/images/candy.png",
+      "bitmaskBit": 0
+    }
+  ]
+}

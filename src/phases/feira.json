@@ -1,0 +1,26 @@
+{
+  "spawnRate": 1500,
+  "simultaneous": 2,
+  "items": [
+    {
+      "key": "apple",
+      "spriteUrl": "/assets/images/apple.png",
+      "bitmaskBit": 0
+    },
+    {
+      "key": "banana",
+      "spriteUrl": "/assets/images/banana.png",
+      "bitmaskBit": 0
+    },
+    {
+      "key": "peanut",
+      "spriteUrl": "/assets/images/peanut.png",
+      "bitmaskBit": 2
+    },
+    {
+      "key": "hazelnut",
+      "spriteUrl": "/assets/images/hazelnut.png",
+      "bitmaskBit": 2
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background-color: #fdfdfd;
+  color: #333;
+}
+
+#root {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
