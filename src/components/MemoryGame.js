@@ -36,8 +36,39 @@ class GameScene extends Phaser.Scene {
 
   create() {
     const { width } = this.scale;
-    this.scoreText = this.add.text(16,          16, `Pontuação: ${this.score}`, { fontSize: '20px', fill: '#000' });
-    this.lifeText  = this.add.text(width - 120, 16, `Vidas: ${this.lives}`,     { fontSize: '20px', fill: '#000' });
+
+    this.scoreText = this.add.text(16, 16, `Pontuação: ${this.score}`, {
+      fontSize: '24px',
+      fill: '#fff'
+    });
+    this.scoreBg = this.add
+      .rectangle(
+        this.scoreText.x - 8,
+        this.scoreText.y - 8,
+        this.scoreText.width + 16,
+        this.scoreText.height + 16,
+        0x000000,
+        0.5
+      )
+      .setOrigin(0, 0)
+      .setDepth(this.scoreText.depth - 1);
+
+    this.lifeText = this.add.text(0, 16, `Vidas: ${this.lives}`, {
+      fontSize: '24px',
+      fill: '#fff'
+    });
+    this.lifeText.setX(width - this.lifeText.width - 16);
+    this.lifeBg = this.add
+      .rectangle(
+        this.lifeText.x - 8,
+        this.lifeText.y - 8,
+        this.lifeText.width + 16,
+        this.lifeText.height + 16,
+        0x000000,
+        0.5
+      )
+      .setOrigin(0, 0)
+      .setDepth(this.lifeText.depth - 1);
 
     const pauseButton = this.add
       .text(width - 80, 50, 'Pausar', { fontSize: '20px', fill: '#000' })
@@ -92,6 +123,10 @@ class GameScene extends Phaser.Scene {
       // Errou: perde vida e mostra dica.
       this.lives -= 1;
       this.lifeText.setText(`Vidas: ${this.lives}`);
+      this.lifeText.setX(this.scale.width - this.lifeText.width - 16);
+      this.lifeBg.setPosition(this.lifeText.x - 8, this.lifeText.y - 8);
+      this.lifeBg.width  = this.lifeText.width + 16;
+      this.lifeBg.height = this.lifeText.height + 16;
       this.add
         .text(sprite.x, sprite.y - 20, 'Alergênico!', { fontSize: '14px', fill: '#f00' })
         .setOrigin(0.5, 1);
@@ -100,6 +135,8 @@ class GameScene extends Phaser.Scene {
       // Acertou: ganha pontos.
       this.score += 10;
       this.scoreText.setText(`Pontuação: ${this.score}`);
+      this.scoreBg.width  = this.scoreText.width + 16;
+      this.scoreBg.height = this.scoreText.height + 16;
       this.difficulty.record(true);
 
       // Efeito de confete – um emitter já configurado no ato da criação.
