@@ -102,6 +102,7 @@ Jogo educativo casual de reflexo que desafia crianças e adultos a identificar e
    * Toque em itens seguros para ganhar pontos.
    * Evite itens com alérgenos marcados no seu perfil.
    * Cada erro reduz uma vida; zero vidas encerra o jogo.
+   * Aperte **P** ou o botão "Pausar" para abrir o menu de pausa.
 4. **Pontuação**: +10 pontos por acerto.
 5. **Fim de Jogo**: Veja seu resultado e reinicie.
 

@@ -11,9 +11,10 @@ import { loadProfile } from '../services/firestore';
 class GameScene extends Phaser.Scene {
   constructor(config) {
     super({ key: 'GameScene' });
-    this.phaseConfig   = config.phaseConfig;
-    this.bitmask       = config.bitmask;
-    this.onGameOver    = config.onGameOver;
+    this.phaseConfig     = config.phaseConfig;
+    this.bitmask         = config.bitmask;
+    this.onGameOver      = config.onGameOver;
+    this.onReturnToMenu  = config.onReturnToMenu;
     this.difficulty    = new DifficultyManager();
     this.score         = 0;
     this.lives         = 3;
@@ -37,6 +38,16 @@ class GameScene extends Phaser.Scene {
     const { width } = this.scale;
     this.scoreText = this.add.text(16,          16, `Pontuação: ${this.score}`, { fontSize: '20px', fill: '#000' });
     this.lifeText  = this.add.text(width - 120, 16, `Vidas: ${this.lives}`,     { fontSize: '20px', fill: '#000' });
+
+    const pauseButton = this.add
+      .text(width - 80, 50, 'Pausar', { fontSize: '20px', fill: '#000' })
+      .setInteractive();
+    const launchPause = () => {
+      this.scene.launch('PauseScene');
+      this.scene.pause();
+    };
+    pauseButton.on('pointerdown', launchPause);
+    this.input.keyboard.on('keydown-P', launchPause);
   }
 
   /**
@@ -133,6 +144,55 @@ class GameScene extends Phaser.Scene {
   }
 }
 
+/** Simple overlay scene used when the game is paused. */
+class PauseScene extends Phaser.Scene {
+  constructor(config) {
+    super({ key: 'PauseScene' });
+    this.onReturnToMenu = config.onReturnToMenu;
+  }
+
+  create() {
+    const { width, height } = this.scale;
+    this.add.rectangle(0, 0, width, height, 0x000000, 0.5).setOrigin(0);
+    this.add
+      .text(width / 2, height / 2 - 40, 'Jogo Pausado', {
+        fontSize: '32px',
+        fill: '#fff'
+      })
+      .setOrigin(0.5);
+
+    const resume = this.add
+      .text(width / 2, height / 2, 'Continuar', {
+        fontSize: '24px',
+        fill: '#0f0'
+      })
+      .setOrigin(0.5)
+      .setInteractive();
+    resume.on('pointerdown', () => {
+      this.scene.resume('GameScene');
+      this.scene.stop();
+    });
+
+    const quit = this.add
+      .text(width / 2, height / 2 + 40, 'Voltar ao Menu', {
+        fontSize: '24px',
+        fill: '#fff'
+      })
+      .setOrigin(0.5)
+      .setInteractive();
+    quit.on('pointerdown', () => {
+      if (typeof this.onReturnToMenu === 'function') {
+        this.onReturnToMenu();
+      }
+    });
+
+    this.input.keyboard.on('keydown-P', () => {
+      this.scene.resume('GameScene');
+      this.scene.stop();
+    });
+  }
+}
+
 /**
  * Componente React que hospeda o Phaser Game.
  */
@@ -145,8 +205,12 @@ export default function MemoryGame() {
   const containerRef = useRef(null);
   const navigate     = useNavigate();
 
-  const handleGameOver = () => {
+  const handleReturnToMenu = () => {
     navigate('/modes');
+  };
+
+  const handleGameOver = () => {
+    handleReturnToMenu();
   };
 
   // Carrega o JSON da fase.
@@ -175,15 +239,27 @@ export default function MemoryGame() {
   useEffect(() => {
     if (!phaseConfig || gameRef.current) return;
 
+    const gameScene  = new GameScene({
+      phaseConfig,
+      bitmask,
+      onGameOver:      handleGameOver,
+      onReturnToMenu:  handleReturnToMenu
+    });
+
     const config = {
       type:   Phaser.AUTO,
       width:  window.innerWidth,
       height: window.innerHeight,
       parent: containerRef.current,
-      scene:  new GameScene({ phaseConfig, bitmask, onGameOver: handleGameOver })
+      scene:  gameScene
     };
 
     gameRef.current = new Phaser.Game(config);
+    gameRef.current.scene.add(
+      'PauseScene',
+      new PauseScene({ onReturnToMenu: handleReturnToMenu }),
+      false
+    );
 
     // Clean‑up na desmontagem do componente.
     return () => {
@@ -192,7 +268,7 @@ export default function MemoryGame() {
         gameRef.current = null;
       }
     };
-  }, [phaseConfig, bitmask, handleGameOver]);
+  }, [phaseConfig, bitmask, handleGameOver, handleReturnToMenu]);
 
   return <div ref={containerRef} style={{ width: '100%', height: '100%' }} />;
 }
