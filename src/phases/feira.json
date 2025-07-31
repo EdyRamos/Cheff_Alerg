@@ -20,7 +20,7 @@
     {
       "key": "hazelnut",
       "spriteUrl": "/assets/images/hazelnut.png",
-      "bitmaskBit": 2
+      "bitmaskBit": 7
     }
   ]
 }

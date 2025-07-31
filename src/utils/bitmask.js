@@ -1,5 +1,5 @@
 /**
- * Utility functions for working with a 7‑bit allergen bitmask.
+ * Utility functions for working with an allergen bitmask.
  * Each bit corresponds to a particular allergen as defined in
  * components/Register.js.  A bit value of 1 indicates the player
  * should avoid that allergen.
@@ -40,9 +40,9 @@ export function removeAllergen(mask, bit) {
  * @param {number} mask
  * @returns {number[]}
  */
-export function bitmaskToArray(mask) {
+export function bitmaskToArray(mask, bitCount = 7) {
   const bits = [];
-  for (let i = 0; i < 7; i++) {
+  for (let i = 0; i < bitCount; i++) {
     if (hasAllergen(mask, i)) bits.push(i);
   }
   return bits;

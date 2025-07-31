@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { saveProfile, loadProfile } from '../services/firestore';
 import { saveLocalProfile } from '../utils/storage';
 
-// Define the names of the seven major allergens used in the bitmask.
+// Define the names of the allergens used in the bitmask.
 const ALLERGENS = [
   { name: 'Leite', bit: 0 },
   { name: 'Ovo', bit: 1 },
@@ -11,7 +11,9 @@ const ALLERGENS = [
   { name: 'Soja', bit: 3 },
   { name: 'Trigo', bit: 4 },
   { name: 'Peixes', bit: 5 },
-  { name: 'Frutos do Mar', bit: 6 }
+  { name: 'Frutos do Mar', bit: 6 },
+  { name: 'Castanhas', bit: 7 },
+  { name: 'Milho', bit: 8 }
 ];
 
 /**
@@ -19,7 +21,7 @@ const ALLERGENS = [
  *
  * Allows the player to enter their name and age and select which
  * allergens they need to avoid.  The selected allergens are stored
- * in a 7‑bit bitmask.  Upon submission the profile is persisted to
+ * in a bitmask.  Upon submission the profile is persisted to
  * Firebase (via the firestore service) and to local storage.
  */
 export default function Register() {
@@ -49,7 +51,13 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     // Compose the profile object.
-    const profile = { uid: Date.now().toString(), nome: name, idade: age, bitmask };
+    const profile = {
+      uid: Date.now().toString(),
+      nome: name,
+      idade: age,
+      bitmask,
+      bitCount: ALLERGENS.length
+    };
     try {
       await saveProfile(profile);
       saveLocalProfile(profile);
