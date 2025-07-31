@@ -10,7 +10,9 @@ const ALLERGEN_NAMES = [
   'Soja',
   'Trigo',
   'Peixes',
-  'Frutos do Mar'
+  'Frutos do Mar',
+  'Castanhas',
+  'Milho'
 ];
 
 /**
@@ -33,7 +35,8 @@ export default function Profile() {
   }
 
   // Compute a list of allergens from the bitmask for display.
-  const selected = ALLERGEN_NAMES.filter((_, idx) => (profile.bitmask & (1 << idx)) !== 0);
+  const bitCount = profile.bitCount || ALLERGEN_NAMES.length;
+  const selected = ALLERGEN_NAMES.slice(0, bitCount).filter((_, idx) => (profile.bitmask & (1 << idx)) !== 0);
 
   return (
     <div style={{ padding: '2rem' }}>
