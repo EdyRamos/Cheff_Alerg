@@ -13,6 +13,7 @@ class GameScene extends Phaser.Scene {
     super({ key: 'GameScene' });
     this.phaseConfig   = config.phaseConfig;
     this.bitmask       = config.bitmask;
+    this.onGameOver    = config.onGameOver;
     this.difficulty    = new DifficultyManager();
     this.score         = 0;
     this.lives         = 3;
@@ -110,8 +111,14 @@ class GameScene extends Phaser.Scene {
     if (this.lives <= 0) {
       this.scene.pause();
       this.add
-        .text(this.scale.width / 2, this.scale.height / 2, 'Fim de Jogo', { fontSize: '32px', fill: '#f00' })
+        .text(this.scale.width / 2, this.scale.height / 2, 'Fim de Jogo', {
+          fontSize: '32px',
+          fill: '#f00'
+        })
         .setOrigin(0.5);
+      if (typeof this.onGameOver === 'function') {
+        this.onGameOver();
+      }
     }
   }
 
@@ -137,6 +144,10 @@ export default function MemoryGame() {
   const gameRef      = useRef(null);
   const containerRef = useRef(null);
   const navigate     = useNavigate();
+
+  const handleGameOver = () => {
+    navigate('/modes');
+  };
 
   // Carrega o JSON da fase.
   useEffect(() => {
@@ -169,7 +180,7 @@ export default function MemoryGame() {
       width:  window.innerWidth,
       height: window.innerHeight,
       parent: containerRef.current,
-      scene:  new GameScene({ phaseConfig, bitmask })
+      scene:  new GameScene({ phaseConfig, bitmask, onGameOver: handleGameOver })
     };
 
     gameRef.current = new Phaser.Game(config);
@@ -181,7 +192,7 @@ export default function MemoryGame() {
         gameRef.current = null;
       }
     };
-  }, [phaseConfig, bitmask]);
+  }, [phaseConfig, bitmask, handleGameOver]);
 
   return <div ref={containerRef} style={{ width: '100%', height: '100%' }} />;
 }
