@@ -6,6 +6,7 @@ import ModeSelect from './components/ModeSelect';
 import Tutorial from './components/Tutorial';
 import MemoryGame from './components/MemoryGame';
 import Intro from './components/Intro';
+import StartupRedirect from './components/StartupRedirect';
 
 /**
  * The top level application component.  It defines the routes
@@ -18,7 +19,8 @@ import Intro from './components/Intro';
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<Intro />} />
+      <Route path="/" element={<StartupRedirect />} />
+      <Route path="/intro" element={<Intro />} />
       <Route path="/register" element={<Register />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/modes" element={<ModeSelect />} />
