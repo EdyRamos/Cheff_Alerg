@@ -1,7 +1,7 @@
 ````markdown
 # Chef Alerg
 
-Jogo educativo casual de reflexo que desafia crianças e adultos a identificar e evitar ingredientes alergênicos em diversos cenários. Construído como PWA com **React** + **Phaser 3**, perfil de usuário, bitmask de alergênicos, dificuldade dinâmica e backend em Firebase (stub).
+Jogo educativo casual de reflexo que desafia crianças e adultos a identificar e evitar ingredientes alergênicos em diversos cenários. Construído como PWA com **React** + **Phaser 3**, perfil de usuário, bitmask de alergênicos, dificuldade dinâmica e backend em Firebase (Firestore).
 
 ---
 
@@ -38,8 +38,8 @@ Jogo educativo casual de reflexo que desafia crianças e adultos a identificar e
   Ajuste automático de taxa de spawn e quantidade simultânea baseado na performance.
 - 📱 **PWA Ready**  
   Instalável em dispositivos móveis e desktop.
-- 🔌 **Stub Firebase**  
-  Serviços prontos para conectar ao Firestore (perfil) e Web NFC (opcional).
+ - 🔌 **Firebase + Web NFC**
+   Perfis salvos no Firestore e opcionalmente gravados em tags NFC.
 - 📊 **Fases Configuráveis**  
   Carga de JSON para cada cenário (feira, supermercado, festa…).
 - 🎉 **Efeitos Visuais**  
@@ -52,7 +52,7 @@ Jogo educativo casual de reflexo que desafia crianças e adultos a identificar e
 ## Tecnologias
 
 - **Front‑end**: React 18, Phaser 3.70, React Router  
-- **Serviços**: Firebase SDK (stub), Web NFC (stub)  
+ - **Serviços**: Firebase SDK (Firestore), Web NFC
 - **Build**: Create‑React‑App, Webpack  
 - **Styling**: CSS puro (reset simples)  
 - **Imagens**: Placeholder gerado via Python/Pillow  
@@ -71,13 +71,16 @@ Jogo educativo casual de reflexo que desafia crianças e adultos a identificar e
 2. **Instale dependências**
 
    ```bash
-   npm install
-   ```
+    npm install
+    ```
 
-3. **Verifique a pasta `public/assets/images`**
+3. **Configure o Firebase**
+   Copie `.env.example` para `.env` e preencha com suas credenciais.
+
+4. **Verifique a pasta `public/assets/images`**
    Certifique-se de que existem `.png` para cada item e `missing.png`.
 
-4. **Inicie o servidor de desenvolvimento**
+5. **Inicie o servidor de desenvolvimento**
 
    ```bash
    npm start
@@ -85,7 +88,7 @@ Jogo educativo casual de reflexo que desafia crianças e adultos a identificar e
 
    Acesse `http://localhost:3000` no navegador.
 
-5. **Build de produção**
+6. **Build de produção**
 
    ```bash
    npm run build
@@ -131,8 +134,8 @@ chef-alerg/
 │   │  ├─ supermercado.json
 │   │  └─ festa.json
 │   ├─ services/
-│   │  ├─ firestore.js   ← Stub Firestore
-│   │  └─ nfc.js         ← Stub Web NFC
+│   │  ├─ firestore.js   ← Integração Firestore
+│   │  └─ nfc.js         ← Web NFC
 │   ├─ utils/
 │   │  ├─ storage.js     ← Helpers localStorage
 │   │  ├─ bitmask.js     ← Funções de máscara de bits
