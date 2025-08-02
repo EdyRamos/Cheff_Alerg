@@ -1,0 +1,17 @@
+{
+  "phaseId": "praia",
+  "background": "/assets/images/bg/beach_day.png",
+  "music": "/assets/audio/beach_loop.mp3",
+  "speed": 1.2,
+  "itemSpawnRate": 800,
+  "duration": 90,
+  "items": [
+    { "id": "shrimp",   "sprite": "/assets/images/shrimp.png",   "allergens": ["shellfish"] },
+    { "id": "coconut",  "sprite": "/assets/images/coconut.png",  "allergens": [] },
+    { "id": "cake",     "sprite": "/assets/images/cake.png",     "allergens": ["gluten", "egg", "milk"] }
+  ],
+  "tips": [
+    "Frutos do mar são a causa nº1 de anafilaxia na praia!",
+    "Cuidado: bolos quase sempre têm ovo e leite."
+  ]
+}

@@ -8,7 +8,7 @@
 // read and update state via events.  See usage in GameWrapper and
 // MemoryGame for examples.
 
-import create from 'zustand';
+import { create } from 'zustand';
 
 export const useStore = create((set) => ({
   /**
