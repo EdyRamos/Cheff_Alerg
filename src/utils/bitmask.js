@@ -37,12 +37,25 @@ export function removeAllergen(mask, bit) {
 
 /**
  * Convert a bitmask into an array of bit indices that are set.
+ *
+ * If `bitCount` is not provided, the function will inspect the mask and
+ * iterate only over the bits necessary to represent it.  The previous
+ * implementation defaulted to a hard coded bit count of 7 which meant any
+ * allergens represented by higher bits (e.g. bit 8 for "Milho") were ignored.
+ *
  * @param {number} mask
+ * @param {number} [bitCount] optional number of bits to inspect
  * @returns {number[]}
  */
-export function bitmaskToArray(mask, bitCount = 7) {
+export function bitmaskToArray(mask, bitCount) {
+  const count =
+    typeof bitCount === 'number'
+      ? bitCount
+      : mask === 0
+      ? 0
+      : Math.floor(Math.log2(mask)) + 1;
   const bits = [];
-  for (let i = 0; i < bitCount; i++) {
+  for (let i = 0; i < count; i++) {
     if (hasAllergen(mask, i)) bits.push(i);
   }
   return bits;
