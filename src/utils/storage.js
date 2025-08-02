@@ -24,9 +24,16 @@ export function saveLocalProfile(profile) {
 export function loadLocalProfile() {
   try {
     const data = localStorage.getItem(PROFILE_KEY);
-    return data ? JSON.parse(data) : null;
+    if (!data) return null;
+    return JSON.parse(data);
   } catch (err) {
     console.warn('Unable to load profile from local storage', err);
+    try {
+      // Remove any corrupted data so future calls don't keep failing
+      localStorage.removeItem(PROFILE_KEY);
+    } catch (_) {
+      /* ignore */
+    }
     return null;
   }
 }
