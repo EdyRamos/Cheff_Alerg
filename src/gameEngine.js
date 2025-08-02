@@ -52,9 +52,16 @@ export default class PhaserGameEngine {
           this.load.image(item.key, item.spriteUrl);
         });
         this.load.image('missing', '/assets/images/missing.png');
+         // Load audio assets
+         this.load.audio('bgMusic', '/assets/audio/background.ogg');
+         this.load.audio('safeSound', '/assets/audio/safe.ogg');
+         this.load.audio('allergenSound', '/assets/audio/allergen.ogg');
       }
       create() {
         const { width } = this.scale;
+         // Background music
+         this.bgMusic = this.sound.add('bgMusic', { loop: true });
+         this.bgMusic.play();
         // Score HUD
         this.scoreText = this.add.text(16, 16, `Pontuação: ${this.score}`, {
           fontSize: '24px',
@@ -125,6 +132,7 @@ export default class PhaserGameEngine {
         const bit = sprite.getData('bit');
         const isAllergen = (bitmask & (1 << bit)) !== 0;
         if (isAllergen) {
+          this.sound.play('allergenSound');
           this.lives -= 1;
           this.lifeText.setText(`Vidas: ${this.lives}`);
           this.lifeText.setX(this.scale.width - this.lifeText.width - 16);
@@ -139,6 +147,7 @@ export default class PhaserGameEngine {
             .setOrigin(0.5, 1);
           this.difficulty.record(false);
         } else {
+          this.sound.play('safeSound');
           this.score += 10;
           this.scoreText.setText(`Pontuação: ${this.score}`);
           this.scoreBg.width = this.scoreText.width + 16;
