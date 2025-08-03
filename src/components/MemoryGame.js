@@ -17,16 +17,25 @@ import { loadProfile } from '../services/firestore';
 export default function MemoryGame() {
   const { phase } = useParams();
   const navigate   = useNavigate();
-  const [phaseConfig, setPhaseConfig] = useState(null);
+  const [phaseConfig, setPhaseConfigState] = useState(null);
   const [bitmask, setBitmask]         = useState(null);
   const setCurrentPhase               = useStore((s) => s.setCurrentPhase);
+  const cachedPhaseConfig             = useStore((s) => s.phases[phase]);
+  const setPhaseConfig                = useStore((s) => s.setPhaseConfig);
 
   // Load phase JSON on mount or when the route param changes.
+  // If the configuration was loaded previously, reuse it from the store
+  // instead of importing the JSON again.
   useEffect(() => {
     (async () => {
       try {
-        const cfg = await import(`../phases/${phase}.json`);
-        setPhaseConfig(cfg.default || cfg);
+        let cfg = cachedPhaseConfig;
+        if (!cfg) {
+          const imported = await import(`../phases/${phase}.json`);
+          cfg = imported.default || imported;
+          setPhaseConfig(phase, cfg); // cache for future use
+        }
+        setPhaseConfigState(cfg);
         setCurrentPhase(phase);
       } catch (err) {
         console.error('Erro ao carregar a fase', err);
@@ -34,7 +43,7 @@ export default function MemoryGame() {
         navigate('/modes');
       }
     })();
-  }, [phase, navigate, setCurrentPhase]);
+  }, [phase, cachedPhaseConfig, navigate, setCurrentPhase, setPhaseConfig]);
 
   // Load the player's allergen bitmask from remote storage.
   useEffect(() => {
