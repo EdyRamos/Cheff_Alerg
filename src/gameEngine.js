@@ -21,6 +21,7 @@ export default class PhaserGameEngine {
     this.onGameOver     = onGameOver;
     this.onReturnToMenu = onReturnToMenu;
     this.game           = null;
+    this.bgMusic        = null;
   }
 
   /**
@@ -32,6 +33,7 @@ export default class PhaserGameEngine {
    */
   init(parent) {
     if (this.game) return;
+    const engine = this;
     const { phaseConfig, bitmask, onGameOver, onReturnToMenu } = this;
 
     // Define GameScene inside init so it can close over the config.
@@ -62,6 +64,7 @@ export default class PhaserGameEngine {
          // Background music
          this.bgMusic = this.sound.add('bgMusic', { loop: true });
          this.bgMusic.play();
+         engine.bgMusic = this.bgMusic;
         // Score HUD
         this.scoreText = this.add.text(16, 16, `Pontuação: ${this.score}`, {
           fontSize: '24px',
@@ -100,6 +103,7 @@ export default class PhaserGameEngine {
           .text(width - 80, 50, 'Pausar', { fontSize: '20px', fill: '#000' })
           .setInteractive();
         const launchPause = () => {
+          this.bgMusic?.pause();
           this.scene.launch('PauseScene');
           this.scene.pause();
         };
@@ -206,6 +210,8 @@ export default class PhaserGameEngine {
           .setOrigin(0.5)
           .setInteractive();
         resume.on('pointerdown', () => {
+          const gameScene = this.scene.get('GameScene');
+          gameScene.bgMusic?.resume();
           this.scene.resume('GameScene');
           this.scene.stop();
         });
@@ -217,9 +223,13 @@ export default class PhaserGameEngine {
           .setOrigin(0.5)
           .setInteractive();
         quit.on('pointerdown', () => {
+          const gameScene = this.scene.get('GameScene');
+          gameScene.bgMusic?.stop();
           if (typeof onReturnToMenu === 'function') onReturnToMenu();
         });
         this.input.keyboard.on('keydown-P', () => {
+          const gameScene = this.scene.get('GameScene');
+          gameScene.bgMusic?.resume();
           this.scene.resume('GameScene');
           this.scene.stop();
         });
@@ -239,6 +249,7 @@ export default class PhaserGameEngine {
    */
   destroy() {
     if (this.game) {
+      this.bgMusic?.stop();
       this.game.destroy(true);
       this.game = null;
     }
