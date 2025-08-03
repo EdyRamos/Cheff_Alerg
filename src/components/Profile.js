@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loadProfile } from '../services/firestore';
+import { useStore } from '../store';
 
 // Lookup table for allergen names corresponding to each bit.
 const ALLERGEN_NAMES = [
@@ -19,16 +20,18 @@ const ALLERGEN_NAMES = [
  * Displays the saved user profile along with a list of allergens to avoid.
  */
 export default function Profile() {
-  const [profile, setProfile] = useState(null);
+  const profile = useStore((s) => s.profile);
+  const setProfile = useStore((s) => s.setProfile);
   const navigate = useNavigate();
 
   useEffect(() => {
-    async function init() {
-      const data = await loadProfile();
-      setProfile(data);
+    if (!profile) {
+      (async () => {
+        const data = await loadProfile();
+        setProfile(data);
+      })();
     }
-    init();
-  }, []);
+  }, [profile, setProfile]);
 
   if (!profile) {
     return <div style={{ padding: '2rem' }}>Carregando…</div>;

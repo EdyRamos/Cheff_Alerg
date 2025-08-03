@@ -9,24 +9,22 @@ import { loadNfcPreference } from '../utils/storage';
 /**
  * MemoryGame
  *
- * This component orchestrates loading the phase configuration and
- * player bitmask before rendering the Phaser canvas via GameWrapper.
- * It replaces the old implementation which embedded all Phaser
- * classes directly in a React component.  Separating these concerns
- * keeps React declarative and makes the game loop easier to test.
+ * Orquestra o carregamento da configuração da fase e o profile do jogador,
+ * usando Zustand como store central. Busca o profile do NFC/local se necessário.
  */
 export default function MemoryGame() {
   const { phase } = useParams();
-  const navigate   = useNavigate();
+  const navigate = useNavigate();
   const [phaseConfig, setPhaseConfigState] = useState(null);
-  const [bitmask, setBitmask]         = useState(null);
-  const setCurrentPhase               = useStore((s) => s.setCurrentPhase);
-  const cachedPhaseConfig             = useStore((s) => s.phases[phase]);
-  const setPhaseConfig                = useStore((s) => s.setPhaseConfig);
 
-  // Load phase JSON on mount or when the route param changes.
-  // If the configuration was loaded previously, reuse it from the store
-  // instead of importing the JSON again.
+  // Zustand store
+  const profile         = useStore((s) => s.profile);
+  const setProfile      = useStore((s) => s.setProfile);
+  const setCurrentPhase = useStore((s) => s.setCurrentPhase);
+  const cachedPhaseConfig = useStore((s) => s.phases[phase]);
+  const setPhaseConfig  = useStore((s) => s.setPhaseConfig);
+
+  // Carrega a configuração da fase, cacheando no Zustand
   useEffect(() => {
     (async () => {
       try {
@@ -34,7 +32,7 @@ export default function MemoryGame() {
         if (!cfg) {
           const imported = await import(`../phases/${phase}.json`);
           cfg = imported.default || imported;
-          setPhaseConfig(phase, cfg); // cache for future use
+          setPhaseConfig(phase, cfg); // Salva no Zustand
         }
         setPhaseConfigState(cfg);
         setCurrentPhase(phase);
@@ -46,29 +44,31 @@ export default function MemoryGame() {
     })();
   }, [phase, cachedPhaseConfig, navigate, setCurrentPhase, setPhaseConfig]);
 
-  // Load the player's allergen bitmask from remote storage.
+  // Carrega o profile se necessário, preferindo NFC se configurado
   useEffect(() => {
-    (async () => {
-      const useNfc = loadNfcPreference();
-      try {
-        const profile = await loadProfile({ nfc: useNfc });
-        setBitmask(profile?.bitmask || 0);
-      } catch (err) {
-        console.error('Erro ao carregar o perfil', err);
-        if (useNfc) {
-          alert('Falha ao ler dados do NFC. Usando perfil local.');
-          try {
-            const profile = await loadProfile();
-            setBitmask(profile?.bitmask || 0);
-            return;
-          } catch (_) {
-            /* ignore */
+    if (!profile) {
+      (async () => {
+        const useNfc = loadNfcPreference();
+        try {
+          const loaded = await loadProfile({ nfc: useNfc });
+          setProfile(loaded || { bitmask: 0 });
+        } catch (err) {
+          console.error('Erro ao carregar o perfil', err);
+          if (useNfc) {
+            alert('Falha ao ler dados do NFC. Usando perfil local.');
+            try {
+              const loaded = await loadProfile();
+              setProfile(loaded || { bitmask: 0 });
+              return;
+            } catch (_) {
+              // ignora
+            }
           }
+          setProfile({ bitmask: 0 });
         }
-        setBitmask(0);
-      }
-    })();
-  }, []);
+      })();
+    }
+  }, [profile, setProfile]);
 
   const handleReturnToMenu = () => {
     navigate('/modes');
@@ -77,11 +77,11 @@ export default function MemoryGame() {
     handleReturnToMenu();
   };
 
-  if (!phaseConfig || bitmask === null) return <LoadingScreen />;
+  if (!phaseConfig || !profile) return <LoadingScreen />;
   return (
     <GameWrapper
       phaseConfig={phaseConfig}
-      bitmask={bitmask}
+      bitmask={profile.bitmask || 0}
       onGameOver={handleGameOver}
       onReturnToMenu={handleReturnToMenu}
     />
