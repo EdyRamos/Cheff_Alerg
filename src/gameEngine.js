@@ -143,6 +143,8 @@ export default class PhaserGameEngine {
         const y = Phaser.Math.Between(100, this.scale.height - 50);
         const sprite = this.add.image(x, y, item.key);
         sprite.setData('bit', item.bitmaskBit || 0);
+        sprite.setData('isTrap', !!item.trap);
+        if (item.penalty) sprite.setData('penalty', item.penalty);
         sprite.setInteractive();
         sprite.on('pointerdown', () => this.handleTap(sprite));
         this.activeItems.push(sprite);
@@ -158,17 +160,16 @@ export default class PhaserGameEngine {
       }
       handleTap(sprite) {
         const bit = sprite.getData('bit');
-        const isAllergen = (bitmask & (1 << bit)) !== 0;
-        if (isAllergen) {
+        const isTrap = sprite.getData('isTrap');
+        if (isTrap) {
+          const penalty = sprite.getData('penalty') || 5;
           this.sound.play('allergenSound');
-          this.lives -= 1;
-          this.lifeText.setText(`Vidas: ${this.lives}`);
-          this.lifeText.setX(this.scale.width - this.lifeText.width - 16);
-          this.lifeBg.setPosition(this.lifeText.x - 8, this.lifeText.y - 8);
-          this.lifeBg.width = this.lifeText.width + 16;
-          this.lifeBg.height = this.lifeText.height + 16;
+          this.score = Math.max(0, this.score - penalty);
+          this.scoreText.setText(`Pontuação: ${this.score}`);
+          this.scoreBg.width = this.scoreText.width + 16;
+          this.scoreBg.height = this.scoreText.height + 16;
           this.add
-            .text(sprite.x, sprite.y - 20, 'Alergênico!', {
+            .text(sprite.x, sprite.y - 20, `-${penalty}`, {
               fontSize: '14px',
               fill: '#f00',
             })
@@ -195,20 +196,38 @@ export default class PhaserGameEngine {
             });
           }
         } else {
-          this.sound.play('safeSound');
-          this.score += 10;
-          this.scoreText.setText(`Pontuação: ${this.score}`);
-          this.scoreBg.width = this.scoreText.width + 16;
-          this.scoreBg.height = this.scoreText.height + 16;
-          this.difficulty.record(true);
-          const emitter = this.add.particles('missing', {
-            speed: { min: -100, max: 100 },
-            angle: { min: 0, max: 360 },
-            lifespan: 500,
-            scale: { start: 0.3, end: 0 },
-            quantity: 0,
-          });
-          emitter.explode(20, sprite.x, sprite.y);
+          const isAllergen = (bitmask & (1 << bit)) !== 0;
+          if (isAllergen) {
+            this.sound.play('allergenSound');
+            this.lives -= 1;
+            this.lifeText.setText(`Vidas: ${this.lives}`);
+            this.lifeText.setX(this.scale.width - this.lifeText.width - 16);
+            this.lifeBg.setPosition(this.lifeText.x - 8, this.lifeText.y - 8);
+            this.lifeBg.width = this.lifeText.width + 16;
+            this.lifeBg.height = this.lifeText.height + 16;
+            this.add
+              .text(sprite.x, sprite.y - 20, 'Alergênico!', {
+                fontSize: '14px',
+                fill: '#f00',
+              })
+              .setOrigin(0.5, 1);
+            this.difficulty.record(false);
+          } else {
+            this.sound.play('safeSound');
+            this.score += 10;
+            this.scoreText.setText(`Pontuação: ${this.score}`);
+            this.scoreBg.width = this.scoreText.width + 16;
+            this.scoreBg.height = this.scoreText.height + 16;
+            this.difficulty.record(true);
+            const emitter = this.add.particles('missing', {
+              speed: { min: -100, max: 100 },
+              angle: { min: 0, max: 360 },
+              lifespan: 500,
+              scale: { start: 0.3, end: 0 },
+              quantity: 0,
+            });
+            emitter.explode(20, sprite.x, sprite.y);
+          }
         }
         this.activeItems = this.activeItems.filter((s) => s !== sprite);
         sprite.destroy();
