@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { saveProfile, loadProfile } from '../services/firestore';
 import { saveLocalProfile } from '../utils/storage';
+import { useStore } from '../store';
 
 // Define the names of the allergens used in the bitmask.
 const ALLERGENS = [
@@ -29,11 +30,13 @@ export default function Register() {
   const [age, setAge] = useState('');
   const [bitmask, setBitmask] = useState(0);
   const navigate = useNavigate();
+  const setProfileStore = useStore((s) => s.setProfile);
 
   // Load an existing profile from remote storage when the component mounts.
   useEffect(() => {
     async function init() {
       const existing = await loadProfile();
+      setProfileStore(existing);
       if (existing) {
         setName(existing.nome || '');
         setAge(existing.idade || '');
@@ -41,7 +44,7 @@ export default function Register() {
       }
     }
     init();
-  }, []);
+  }, [setProfileStore]);
 
   // Toggle the bit corresponding to an allergen when the checkbox changes.
   const handleToggle = (bit) => {
@@ -61,6 +64,7 @@ export default function Register() {
     try {
       await saveProfile(profile);
       saveLocalProfile(profile);
+      setProfileStore(profile);
       navigate('/modes');
     } catch (err) {
       console.error('Failed to save profile', err);

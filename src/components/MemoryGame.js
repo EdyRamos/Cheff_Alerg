@@ -16,10 +16,11 @@ import { loadProfile } from '../services/firestore';
  */
 export default function MemoryGame() {
   const { phase } = useParams();
-  const navigate   = useNavigate();
+  const navigate         = useNavigate();
   const [phaseConfig, setPhaseConfig] = useState(null);
-  const [bitmask, setBitmask]         = useState(null);
-  const setCurrentPhase               = useStore((s) => s.setCurrentPhase);
+  const profile                   = useStore((s) => s.profile);
+  const setProfile                = useStore((s) => s.setProfile);
+  const setCurrentPhase           = useStore((s) => s.setCurrentPhase);
 
   // Load phase JSON on mount or when the route param changes.
   useEffect(() => {
@@ -36,18 +37,20 @@ export default function MemoryGame() {
     })();
   }, [phase, navigate, setCurrentPhase]);
 
-  // Load the player's allergen bitmask from remote storage.
+  // Ensure the profile is loaded so we can access the bitmask.
   useEffect(() => {
-    (async () => {
-      try {
-        const profile = await loadProfile();
-        setBitmask(profile?.bitmask || 0);
-      } catch (err) {
-        console.error('Erro ao carregar o perfil', err);
-        setBitmask(0);
-      }
-    })();
-  }, []);
+    if (!profile) {
+      (async () => {
+        try {
+          const data = await loadProfile();
+          setProfile(data || { bitmask: 0 });
+        } catch (err) {
+          console.error('Erro ao carregar o perfil', err);
+          setProfile({ bitmask: 0 });
+        }
+      })();
+    }
+  }, [profile, setProfile]);
 
   const handleReturnToMenu = () => {
     navigate('/modes');
@@ -56,11 +59,11 @@ export default function MemoryGame() {
     handleReturnToMenu();
   };
 
-  if (!phaseConfig || bitmask === null) return <LoadingScreen />;
+  if (!phaseConfig || !profile) return <LoadingScreen />;
   return (
     <GameWrapper
       phaseConfig={phaseConfig}
-      bitmask={bitmask}
+      bitmask={profile.bitmask || 0}
       onGameOver={handleGameOver}
       onReturnToMenu={handleReturnToMenu}
     />
