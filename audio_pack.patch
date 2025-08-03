@@ -1,0 +1,22 @@
+*** Begin Patch
+*** Add File: AUDIO_CREDITS.md
++# Audio Credits
++
++This repository uses a minimal sound effects and music pack for the **Chef Alerg** game.
++All files are licensed under **Creative Commons CC0**, meaning they can be used freely without attribution.  
++Nevertheless, the sources and authors are documented here for reference:
++
++| File | Source title & author | License | Source URL |
++| --- | --- | --- | --- |
++| `public/assets/audio/allergen.ogg` | “Beep” by Test User (generated in Audacity) | CC0 | <https://opengameart.org/content/beep-sound> |
++| `public/assets/audio/safe.ogg` | “Coin sounds” by syncopika (we used the first variation) | CC0 | <https://opengameart.org/content/coin-sounds> |
++| `public/assets/audio/background.ogg` | “Calm Track (loop)” by pmiller | CC0 | <https://opengameart.org/content/calm-track> |
++| `public/assets/audio/beach_loop.mp3` | “Beach Stage (bpm 128)” by MintoDog | CC0 | <https://opengameart.org/content/beach-stage> |
++
++If you wish to replace these sounds with other CC0 recordings, ensure the replacement files follow the same naming convention and reside in `public/assets/audio`.
++
+*** End Patch
+*** Begin Patch
+*** Add File: public/assets/audio/.gitkeep
++# This empty file ensures that the audio directory is tracked by git.
+*** End Patch
