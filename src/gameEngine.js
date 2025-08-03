@@ -38,13 +38,18 @@ export default class PhaserGameEngine {
     class GameScene extends Phaser.Scene {
       constructor() {
         super({ key: 'GameScene' });
-        this.score      = 0;
-        this.lives      = 3;
+        this.score        = 0;
+        this.lives        = 3;
         this.activeItems  = [];
         this.lastSpawn    = 0;
         this.difficulty   = new DifficultyManager();
-        this.spawnRate    = phaseConfig.spawnRate || 1500;
+        this.spawnRate    =
+          phaseConfig.itemSpawnRate || phaseConfig.spawnRate || 1500;
         this.simultaneous = phaseConfig.simultaneous || 2;
+        this.speed        = phaseConfig.speed || 1;
+        this.duration     = phaseConfig.duration || null;
+        this.tips         = phaseConfig.tips || [];
+        this.tipText      = null;
       }
       preload() {
         // Load item sprites
@@ -52,16 +57,26 @@ export default class PhaserGameEngine {
           this.load.image(item.key, item.spriteUrl);
         });
         this.load.image('missing', '/assets/images/missing.png');
-         // Load audio assets
-         this.load.audio('bgMusic', '/assets/audio/background.ogg');
-         this.load.audio('safeSound', '/assets/audio/safe.ogg');
-         this.load.audio('allergenSound', '/assets/audio/allergen.ogg');
+        if (phaseConfig.background) {
+          this.load.image('background', phaseConfig.background);
+        }
+        const music = phaseConfig.music || '/assets/audio/background.ogg';
+        // Load audio assets
+        this.load.audio('bgMusic', music);
+        this.load.audio('safeSound', '/assets/audio/safe.ogg');
+        this.load.audio('allergenSound', '/assets/audio/allergen.ogg');
       }
       create() {
-        const { width } = this.scale;
-         // Background music
-         this.bgMusic = this.sound.add('bgMusic', { loop: true });
-         this.bgMusic.play();
+        const { width, height } = this.scale;
+        if (phaseConfig.background) {
+          this.add
+            .image(0, 0, 'background')
+            .setOrigin(0)
+            .setDisplaySize(width, height);
+        }
+        // Background music
+        this.bgMusic = this.sound.add('bgMusic', { loop: true });
+        this.bgMusic.play();
         // Score HUD
         this.scoreText = this.add.text(16, 16, `Pontuação: ${this.score}`, {
           fontSize: '24px',
@@ -105,6 +120,19 @@ export default class PhaserGameEngine {
         };
         pauseButton.on('pointerdown', launchPause);
         this.input.keyboard.on('keydown-P', launchPause);
+        if (this.duration) {
+          this.time.delayedCall(this.duration * 1000, () => {
+            this.scene.pause();
+            this.bgMusic.stop();
+            this.add
+              .text(width / 2, height / 2, 'Fim de Jogo', {
+                fontSize: '32px',
+                fill: '#f00',
+              })
+              .setOrigin(0.5);
+            if (typeof onGameOver === 'function') onGameOver();
+          });
+        }
       }
       spawnItem(time) {
         if (this.activeItems.length >= this.simultaneous) return;
@@ -121,7 +149,7 @@ export default class PhaserGameEngine {
         this.tweens.add({
           targets: sprite,
           y: this.scale.height + 50,
-          duration: 6000,
+          duration: 6000 / this.speed,
           onComplete: () => {
             this.activeItems = this.activeItems.filter((s) => s !== sprite);
             sprite.destroy();
@@ -146,6 +174,26 @@ export default class PhaserGameEngine {
             })
             .setOrigin(0.5, 1);
           this.difficulty.record(false);
+          if (this.lives > 0 && this.tips.length) {
+            if (this.tipText) this.tipText.destroy();
+            const tip = Phaser.Math.RND.pick(this.tips);
+            this.tipText = this.add
+              .text(this.scale.width / 2, this.scale.height - 40, tip, {
+                fontSize: '20px',
+                fill: '#fff',
+                backgroundColor: 'rgba(0,0,0,0.7)',
+                padding: { x: 8, y: 4 },
+                wordWrap: { width: this.scale.width - 40 },
+                align: 'center',
+              })
+              .setOrigin(0.5);
+            this.time.delayedCall(4000, () => {
+              if (this.tipText) {
+                this.tipText.destroy();
+                this.tipText = null;
+              }
+            });
+          }
         } else {
           this.sound.play('safeSound');
           this.score += 10;
@@ -166,6 +214,7 @@ export default class PhaserGameEngine {
         sprite.destroy();
         if (this.lives <= 0) {
           this.scene.pause();
+          this.bgMusic.stop();
           this.add
             .text(this.scale.width / 2, this.scale.height / 2, 'Fim de Jogo', {
               fontSize: '32px',
@@ -177,7 +226,7 @@ export default class PhaserGameEngine {
       }
       update(time) {
         const params = this.difficulty.getParameters(
-          phaseConfig.spawnRate,
+          phaseConfig.itemSpawnRate || phaseConfig.spawnRate,
           phaseConfig.simultaneous
         );
         this.spawnRate = params.spawnRate;
