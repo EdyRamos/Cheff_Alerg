@@ -1,14 +1,35 @@
 {
   "phaseId": "praia",
-  "background": "/assets/images/bg/beach_day.png",
+  "background": "/assets/images/bg/praia.png",
   "music": "/assets/audio/beach_loop.mp3",
   "speed": 1.2,
   "itemSpawnRate": 800,
   "duration": 90,
   "items": [
-    { "id": "shrimp",   "sprite": "/assets/images/shrimp.png",   "allergens": ["shellfish"] },
-    { "id": "coconut",  "sprite": "/assets/images/coconut.png",  "allergens": [] },
-    { "id": "cake",     "sprite": "/assets/images/cake.png",     "allergens": ["gluten", "egg", "milk"] }
+    {
+      "allergens": [
+        "shellfish"
+      ],
+      "key": "shrimp",
+      "spriteUrl": "/assets/images/items/shrimp.png",
+      "bitmaskBit": 6
+    },
+    {
+      "allergens": [],
+      "key": "coconut",
+      "spriteUrl": "/assets/images/items/coconut.png",
+      "bitmaskBit": 0
+    },
+    {
+      "allergens": [
+        "gluten",
+        "egg",
+        "milk"
+      ],
+      "key": "cake",
+      "spriteUrl": "/assets/images/items/cake.png",
+      "bitmaskBit": 1
+    }
   ],
   "tips": [
     "Frutos do mar são a causa nº1 de anafilaxia na praia!",
