@@ -10,7 +10,9 @@
     {
       "key": "banana",
       "spriteUrl": "/assets/images/items/banana.png",
-      "bitmaskBit": 0
+      "bitmaskBit": 0,
+      "trap": true,
+      "penalty": 5
     },
     {
       "key": "peanut",
