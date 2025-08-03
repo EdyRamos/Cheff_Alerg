@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { saveProfile, loadProfile } from '../services/firestore';
+import { saveLocalProfile, saveNfcPreference, loadNfcPreference } from '../utils/storage';
 
 // Define the names of the allergens used in the bitmask.
 const ALLERGENS = [
@@ -28,6 +29,7 @@ export default function Register() {
   const [age, setAge] = useState('');
   const [bitmask, setBitmask] = useState(0);
   const [uid, setUid] = useState(null);
+  const [useNfc, setUseNfc] = useState(false);
   const navigate = useNavigate();
 
   // Load an existing profile from remote storage when the component mounts.
@@ -40,6 +42,8 @@ export default function Register() {
         setAge(existing.idade || '');
         setBitmask(existing.bitmask || 0);
       }
+      // Carrega preferência de NFC, mesmo se não houver profile
+      setUseNfc(loadNfcPreference());
     }
     init();
   }, []);
@@ -60,11 +64,17 @@ export default function Register() {
       bitCount: ALLERGENS.length
     };
     try {
-      await saveProfile(profile);
+      await saveProfile(profile, { nfc: useNfc }); // envia opção do NFC
+      saveLocalProfile(profile);
+      saveNfcPreference(useNfc);
       navigate('/modes');
     } catch (err) {
       console.error('Failed to save profile', err);
-      alert('Falha ao salvar o perfil. Por favor, tente novamente.');
+      alert(
+        useNfc
+          ? 'Falha ao gravar no NFC. Por favor, tente novamente.'
+          : 'Falha ao salvar o perfil. Por favor, tente novamente.'
+      );
     }
   };
 
@@ -109,6 +119,16 @@ export default function Register() {
               </label>
             </div>
           ))}
+        </div>
+        <div>
+          <label>
+            <input
+              type="checkbox"
+              checked={useNfc}
+              onChange={(e) => setUseNfc(e.target.checked)}
+            />
+            Gravar em NFC
+          </label>
         </div>
         <button type="submit" style={{ marginTop: '1rem' }}>
           Salvar Perfil

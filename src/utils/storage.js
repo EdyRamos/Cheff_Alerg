@@ -4,6 +4,7 @@
  */
 
 const PROFILE_KEY = 'chefAlergProfile';
+const NFC_ENABLED_KEY = 'chefAlergNfc';
 
 /**
  * Save the given profile object to localStorage.
@@ -35,5 +36,31 @@ export function loadLocalProfile() {
       /* ignore */
     }
     return null;
+  }
+}
+
+/**
+ * Persist whether the user opted to use NFC for profile storage.
+ * @param {boolean} enabled
+ */
+export function saveNfcPreference(enabled) {
+  try {
+    localStorage.setItem(NFC_ENABLED_KEY, JSON.stringify(Boolean(enabled)));
+  } catch (err) {
+    console.warn('Unable to save NFC preference', err);
+  }
+}
+
+/**
+ * Retrieve the NFC usage preference.
+ * @returns {boolean}
+ */
+export function loadNfcPreference() {
+  try {
+    const data = localStorage.getItem(NFC_ENABLED_KEY);
+    return data ? JSON.parse(data) : false;
+  } catch (err) {
+    console.warn('Unable to load NFC preference', err);
+    return false;
   }
 }
