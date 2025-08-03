@@ -28,6 +28,7 @@ export default function Register() {
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
   const [bitmask, setBitmask] = useState(0);
+  const [uid, setUid] = useState(null);
   const [useNfc, setUseNfc] = useState(false);
   const navigate = useNavigate();
 
@@ -36,10 +37,12 @@ export default function Register() {
     async function init() {
       const existing = await loadProfile();
       if (existing) {
+        setUid(existing.uid || null);
         setName(existing.nome || '');
         setAge(existing.idade || '');
         setBitmask(existing.bitmask || 0);
       }
+      // Carrega preferência de NFC, mesmo se não houver profile
       setUseNfc(loadNfcPreference());
     }
     init();
@@ -54,14 +57,14 @@ export default function Register() {
     e.preventDefault();
     // Compose the profile object.
     const profile = {
-      uid: Date.now().toString(),
+      uid: uid || Date.now().toString(),
       nome: name,
       idade: age,
       bitmask,
       bitCount: ALLERGENS.length
     };
     try {
-      await saveProfile(profile, { nfc: useNfc });
+      await saveProfile(profile, { nfc: useNfc }); // envia opção do NFC
       saveLocalProfile(profile);
       saveNfcPreference(useNfc);
       navigate('/modes');

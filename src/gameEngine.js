@@ -38,13 +38,18 @@ export default class PhaserGameEngine {
     class GameScene extends Phaser.Scene {
       constructor() {
         super({ key: 'GameScene' });
-        this.score      = 0;
-        this.lives      = 3;
+        this.score        = 0;
+        this.lives        = 3;
         this.activeItems  = [];
         this.lastSpawn    = 0;
         this.difficulty   = new DifficultyManager();
-        this.spawnRate    = phaseConfig.spawnRate || 1500;
+        this.spawnRate    =
+          phaseConfig.itemSpawnRate || phaseConfig.spawnRate || 1500;
         this.simultaneous = phaseConfig.simultaneous || 2;
+        this.speed        = phaseConfig.speed || 1;
+        this.duration     = phaseConfig.duration || null;
+        this.tips         = phaseConfig.tips || [];
+        this.tipText      = null;
       }
       preload() {
         // Load item sprites
@@ -52,16 +57,26 @@ export default class PhaserGameEngine {
           this.load.image(item.key, item.spriteUrl);
         });
         this.load.image('missing', '/assets/images/missing.png');
-         // Load audio assets
-         this.load.audio('bgMusic', '/assets/audio/background.ogg');
-         this.load.audio('safeSound', '/assets/audio/safe.ogg');
-         this.load.audio('allergenSound', '/assets/audio/allergen.ogg');
+        if (phaseConfig.background) {
+          this.load.image('background', phaseConfig.background);
+        }
+        const music = phaseConfig.music || '/assets/audio/background.ogg';
+        // Load audio assets
+        this.load.audio('bgMusic', music);
+        this.load.audio('safeSound', '/assets/audio/safe.ogg');
+        this.load.audio('allergenSound', '/assets/audio/allergen.ogg');
       }
       create() {
-        const { width } = this.scale;
-         // Background music
-         this.bgMusic = this.sound.add('bgMusic', { loop: true });
-         this.bgMusic.play();
+        const { width, height } = this.scale;
+        if (phaseConfig.background) {
+          this.add
+            .image(0, 0, 'background')
+            .setOrigin(0)
+            .setDisplaySize(width, height);
+        }
+        // Background music
+        this.bgMusic = this.sound.add('bgMusic', { loop: true });
+        this.bgMusic.play();
         // Score HUD
         this.scoreText = this.add.text(16, 16, `Pontuação: ${this.score}`, {
           fontSize: '24px',
@@ -105,6 +120,19 @@ export default class PhaserGameEngine {
         };
         pauseButton.on('pointerdown', launchPause);
         this.input.keyboard.on('keydown-P', launchPause);
+        if (this.duration) {
+          this.time.delayedCall(this.duration * 1000, () => {
+            this.scene.pause();
+            this.bgMusic.stop();
+            this.add
+              .text(width / 2, height / 2, 'Fim de Jogo', {
+                fontSize: '32px',
+                fill: '#f00',
+              })
+              .setOrigin(0.5);
+            if (typeof onGameOver === 'function') onGameOver();
+          });
+        }
       }
       spawnItem(time) {
         if (this.activeItems.length >= this.simultaneous) return;
@@ -112,16 +140,18 @@ export default class PhaserGameEngine {
         this.lastSpawn = time;
         const item = Phaser.Math.RND.pick(phaseConfig.items);
         const x = Phaser.Math.Between(50, this.scale.width - 50);
-        const y = Phaser.Math.Between(100, this.scale.height - 50);
+        const y = -50;
         const sprite = this.add.image(x, y, item.key);
         sprite.setData('bit', item.bitmaskBit || 0);
+        sprite.setData('isTrap', !!item.trap);
+        if (item.penalty) sprite.setData('penalty', item.penalty);
         sprite.setInteractive();
         sprite.on('pointerdown', () => this.handleTap(sprite));
         this.activeItems.push(sprite);
         this.tweens.add({
           targets: sprite,
           y: this.scale.height + 50,
-          duration: 6000,
+          duration: 6000 / this.speed,
           onComplete: () => {
             this.activeItems = this.activeItems.filter((s) => s !== sprite);
             sprite.destroy();
@@ -130,42 +160,80 @@ export default class PhaserGameEngine {
       }
       handleTap(sprite) {
         const bit = sprite.getData('bit');
-        const isAllergen = (bitmask & (1 << bit)) !== 0;
-        if (isAllergen) {
+        const isTrap = sprite.getData('isTrap');
+        if (isTrap) {
+          const penalty = sprite.getData('penalty') || 5;
           this.sound.play('allergenSound');
-          this.lives -= 1;
-          this.lifeText.setText(`Vidas: ${this.lives}`);
-          this.lifeText.setX(this.scale.width - this.lifeText.width - 16);
-          this.lifeBg.setPosition(this.lifeText.x - 8, this.lifeText.y - 8);
-          this.lifeBg.width = this.lifeText.width + 16;
-          this.lifeBg.height = this.lifeText.height + 16;
+          this.score = Math.max(0, this.score - penalty);
+          this.scoreText.setText(`Pontuação: ${this.score}`);
+          this.scoreBg.width = this.scoreText.width + 16;
+          this.scoreBg.height = this.scoreText.height + 16;
           this.add
-            .text(sprite.x, sprite.y - 20, 'Alergênico!', {
+            .text(sprite.x, sprite.y - 20, `-${penalty}`, {
               fontSize: '14px',
               fill: '#f00',
             })
             .setOrigin(0.5, 1);
           this.difficulty.record(false);
+          if (this.lives > 0 && this.tips.length) {
+            if (this.tipText) this.tipText.destroy();
+            const tip = Phaser.Math.RND.pick(this.tips);
+            this.tipText = this.add
+              .text(this.scale.width / 2, this.scale.height - 40, tip, {
+                fontSize: '20px',
+                fill: '#fff',
+                backgroundColor: 'rgba(0,0,0,0.7)',
+                padding: { x: 8, y: 4 },
+                wordWrap: { width: this.scale.width - 40 },
+                align: 'center',
+              })
+              .setOrigin(0.5);
+            this.time.delayedCall(4000, () => {
+              if (this.tipText) {
+                this.tipText.destroy();
+                this.tipText = null;
+              }
+            });
+          }
         } else {
-          this.sound.play('safeSound');
-          this.score += 10;
-          this.scoreText.setText(`Pontuação: ${this.score}`);
-          this.scoreBg.width = this.scoreText.width + 16;
-          this.scoreBg.height = this.scoreText.height + 16;
-          this.difficulty.record(true);
-          const emitter = this.add.particles('missing', {
-            speed: { min: -100, max: 100 },
-            angle: { min: 0, max: 360 },
-            lifespan: 500,
-            scale: { start: 0.3, end: 0 },
-            quantity: 0,
-          });
-          emitter.explode(20, sprite.x, sprite.y);
+          const isAllergen = (bitmask & (1 << bit)) !== 0;
+          if (isAllergen) {
+            this.sound.play('allergenSound');
+            this.lives -= 1;
+            this.lifeText.setText(`Vidas: ${this.lives}`);
+            this.lifeText.setX(this.scale.width - this.lifeText.width - 16);
+            this.lifeBg.setPosition(this.lifeText.x - 8, this.lifeText.y - 8);
+            this.lifeBg.width = this.lifeText.width + 16;
+            this.lifeBg.height = this.lifeText.height + 16;
+            this.add
+              .text(sprite.x, sprite.y - 20, 'Alergênico!', {
+                fontSize: '14px',
+                fill: '#f00',
+              })
+              .setOrigin(0.5, 1);
+            this.difficulty.record(false);
+          } else {
+            this.sound.play('safeSound');
+            this.score += 10;
+            this.scoreText.setText(`Pontuação: ${this.score}`);
+            this.scoreBg.width = this.scoreText.width + 16;
+            this.scoreBg.height = this.scoreText.height + 16;
+            this.difficulty.record(true);
+            const emitter = this.add.particles('missing', {
+              speed: { min: -100, max: 100 },
+              angle: { min: 0, max: 360 },
+              lifespan: 500,
+              scale: { start: 0.3, end: 0 },
+              quantity: 0,
+            });
+            emitter.explode(20, sprite.x, sprite.y);
+          }
         }
         this.activeItems = this.activeItems.filter((s) => s !== sprite);
         sprite.destroy();
         if (this.lives <= 0) {
           this.scene.pause();
+          this.bgMusic.stop();
           this.add
             .text(this.scale.width / 2, this.scale.height / 2, 'Fim de Jogo', {
               fontSize: '32px',
@@ -177,7 +245,7 @@ export default class PhaserGameEngine {
       }
       update(time) {
         const params = this.difficulty.getParameters(
-          phaseConfig.spawnRate,
+          phaseConfig.itemSpawnRate || phaseConfig.spawnRate,
           phaseConfig.simultaneous
         );
         this.spawnRate = params.spawnRate;
