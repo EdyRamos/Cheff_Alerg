@@ -4,22 +4,22 @@
   "items": [
     {
       "key": "apple",
-      "spriteUrl": "/assets/images/apple.png",
+      "spriteUrl": "/assets/images/items/apple.png",
       "bitmaskBit": 0
     },
     {
       "key": "banana",
-      "spriteUrl": "/assets/images/banana.png",
+      "spriteUrl": "/assets/images/items/banana.png",
       "bitmaskBit": 0
     },
     {
       "key": "peanut",
-      "spriteUrl": "/assets/images/peanut.png",
+      "spriteUrl": "/assets/images/items/peanut.png",
       "bitmaskBit": 2
     },
     {
       "key": "hazelnut",
-      "spriteUrl": "/assets/images/hazelnut.png",
+      "spriteUrl": "/assets/images/items/hazelnut.png",
       "bitmaskBit": 7
     }
   ]

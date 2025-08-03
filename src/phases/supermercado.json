@@ -4,23 +4,23 @@
   "items": [
     {
       "key": "cookie",
-      "spriteUrl": "/assets/images/cookie.png",
+      "spriteUrl": "/assets/images/items/cookie.png",
       "bitmaskBit": 1
     },
     {
       "key": "milk",
-      "spriteUrl": "/assets/images/milk.png",
+      "spriteUrl": "/assets/images/items/milk.png",
       "bitmaskBit": 0
     },
     {
       "key": "bread",
-      "spriteUrl": "/assets/images/bread.png",
+      "spriteUrl": "/assets/images/items/bread.png",
       "bitmaskBit": 4,
       "trap": true
     },
     {
       "key": "cereal",
-      "spriteUrl": "/assets/images/cereal.png",
+      "spriteUrl": "/assets/images/items/cereal.png",
       "bitmaskBit": 4
     }
   ]
