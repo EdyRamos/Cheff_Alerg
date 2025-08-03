@@ -4,29 +4,37 @@ import GameWrapper from './GameWrapper';
 import LoadingScreen from './LoadingScreen';
 import { useStore } from '../store';
 import { loadProfile } from '../services/firestore';
+import { loadNfcPreference } from '../utils/storage';
 
 /**
  * MemoryGame
  *
- * This component orchestrates loading the phase configuration and
- * player bitmask before rendering the Phaser canvas via GameWrapper.
- * It replaces the old implementation which embedded all Phaser
- * classes directly in a React component.  Separating these concerns
- * keeps React declarative and makes the game loop easier to test.
+ * Orquestra o carregamento da configuração da fase e o profile do jogador,
+ * usando Zustand como store central. Busca o profile do NFC/local se necessário.
  */
 export default function MemoryGame() {
   const { phase } = useParams();
-  const navigate   = useNavigate();
-  const [phaseConfig, setPhaseConfig] = useState(null);
-  const [bitmask, setBitmask]         = useState(null);
-  const setCurrentPhase               = useStore((s) => s.setCurrentPhase);
+  const navigate = useNavigate();
+  const [phaseConfig, setPhaseConfigState] = useState(null);
 
-  // Load phase JSON on mount or when the route param changes.
+  // Zustand store
+  const profile         = useStore((s) => s.profile);
+  const setProfile      = useStore((s) => s.setProfile);
+  const setCurrentPhase = useStore((s) => s.setCurrentPhase);
+  const cachedPhaseConfig = useStore((s) => s.phases[phase]);
+  const setPhaseConfig  = useStore((s) => s.setPhaseConfig);
+
+  // Carrega a configuração da fase, cacheando no Zustand
   useEffect(() => {
     (async () => {
       try {
-        const cfg = await import(`../phases/${phase}.json`);
-        setPhaseConfig(cfg.default || cfg);
+        let cfg = cachedPhaseConfig;
+        if (!cfg) {
+          const imported = await import(`../phases/${phase}.json`);
+          cfg = imported.default || imported;
+          setPhaseConfig(phase, cfg); // Salva no Zustand
+        }
+        setPhaseConfigState(cfg);
         setCurrentPhase(phase);
       } catch (err) {
         console.error('Erro ao carregar a fase', err);
@@ -34,20 +42,33 @@ export default function MemoryGame() {
         navigate('/modes');
       }
     })();
-  }, [phase, navigate, setCurrentPhase]);
+  }, [phase, cachedPhaseConfig, navigate, setCurrentPhase, setPhaseConfig]);
 
-  // Load the player's allergen bitmask from remote storage.
+  // Carrega o profile se necessário, preferindo NFC se configurado
   useEffect(() => {
-    (async () => {
-      try {
-        const profile = await loadProfile();
-        setBitmask(profile?.bitmask || 0);
-      } catch (err) {
-        console.error('Erro ao carregar o perfil', err);
-        setBitmask(0);
-      }
-    })();
-  }, []);
+    if (!profile) {
+      (async () => {
+        const useNfc = loadNfcPreference();
+        try {
+          const loaded = await loadProfile({ nfc: useNfc });
+          setProfile(loaded || { bitmask: 0 });
+        } catch (err) {
+          console.error('Erro ao carregar o perfil', err);
+          if (useNfc) {
+            alert('Falha ao ler dados do NFC. Usando perfil local.');
+            try {
+              const loaded = await loadProfile();
+              setProfile(loaded || { bitmask: 0 });
+              return;
+            } catch (_) {
+              // ignora
+            }
+          }
+          setProfile({ bitmask: 0 });
+        }
+      })();
+    }
+  }, [profile, setProfile]);
 
   const handleReturnToMenu = () => {
     navigate('/modes');
@@ -56,11 +77,11 @@ export default function MemoryGame() {
     handleReturnToMenu();
   };
 
-  if (!phaseConfig || bitmask === null) return <LoadingScreen />;
+  if (!phaseConfig || !profile) return <LoadingScreen />;
   return (
     <GameWrapper
       phaseConfig={phaseConfig}
-      bitmask={bitmask}
+      bitmask={profile.bitmask || 0}
       onGameOver={handleGameOver}
       onReturnToMenu={handleReturnToMenu}
     />
