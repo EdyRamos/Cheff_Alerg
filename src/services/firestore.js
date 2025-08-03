@@ -38,11 +38,15 @@ export async function saveProfile(profile, { nfc = false } = {}) {
     const db = getDb();
     const ref = doc(db, 'profiles', profile.uid);
     await setDoc(ref, profile);
-    if (nfc) {
-      await writeTag(JSON.stringify(profile));
-    }
   } catch (err) {
     console.warn('Failed to save profile to Firestore', err);
+  }
+
+  if (nfc) {
+    const ok = await writeTag(JSON.stringify(profile));
+    if (!ok) {
+      throw new Error('Failed to write NFC tag');
+    }
   }
 }
 
@@ -57,12 +61,14 @@ export async function loadProfile({ nfc = false } = {}) {
   if (nfc && !profile) {
     try {
       const tagData = await readTag();
-      if (tagData) {
-        profile = JSON.parse(tagData);
-        saveLocalProfile(profile);
+      if (!tagData) {
+        throw new Error('No NFC tag data');
       }
+      profile = JSON.parse(tagData);
+      saveLocalProfile(profile);
     } catch (err) {
       console.warn('Failed to read NFC tag', err);
+      throw err;
     }
   }
 

@@ -4,6 +4,7 @@ import GameWrapper from './GameWrapper';
 import LoadingScreen from './LoadingScreen';
 import { useStore } from '../store';
 import { loadProfile } from '../services/firestore';
+import { loadNfcPreference } from '../utils/storage';
 
 /**
  * MemoryGame
@@ -39,11 +40,22 @@ export default function MemoryGame() {
   // Load the player's allergen bitmask from remote storage.
   useEffect(() => {
     (async () => {
+      const useNfc = loadNfcPreference();
       try {
-        const profile = await loadProfile();
+        const profile = await loadProfile({ nfc: useNfc });
         setBitmask(profile?.bitmask || 0);
       } catch (err) {
         console.error('Erro ao carregar o perfil', err);
+        if (useNfc) {
+          alert('Falha ao ler dados do NFC. Usando perfil local.');
+          try {
+            const profile = await loadProfile();
+            setBitmask(profile?.bitmask || 0);
+            return;
+          } catch (_) {
+            /* ignore */
+          }
+        }
         setBitmask(0);
       }
     })();
