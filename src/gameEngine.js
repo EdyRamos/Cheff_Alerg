@@ -140,7 +140,7 @@ export default class PhaserGameEngine {
         this.lastSpawn = time;
         const item = Phaser.Math.RND.pick(phaseConfig.items);
         const x = Phaser.Math.Between(50, this.scale.width - 50);
-        const y = Phaser.Math.Between(100, this.scale.height - 50);
+        const y = -50;
         const sprite = this.add.image(x, y, item.key);
         sprite.setData('bit', item.bitmaskBit || 0);
         sprite.setData('isTrap', !!item.trap);
