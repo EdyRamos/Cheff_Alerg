@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { saveProfile, loadProfile } from '../services/firestore';
-import { saveLocalProfile } from '../utils/storage';
 
 // Define the names of the allergens used in the bitmask.
 const ALLERGENS = [
@@ -28,6 +27,7 @@ export default function Register() {
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
   const [bitmask, setBitmask] = useState(0);
+  const [uid, setUid] = useState(null);
   const navigate = useNavigate();
 
   // Load an existing profile from remote storage when the component mounts.
@@ -35,6 +35,7 @@ export default function Register() {
     async function init() {
       const existing = await loadProfile();
       if (existing) {
+        setUid(existing.uid || null);
         setName(existing.nome || '');
         setAge(existing.idade || '');
         setBitmask(existing.bitmask || 0);
@@ -52,7 +53,7 @@ export default function Register() {
     e.preventDefault();
     // Compose the profile object.
     const profile = {
-      uid: Date.now().toString(),
+      uid: uid || Date.now().toString(),
       nome: name,
       idade: age,
       bitmask,
@@ -60,7 +61,6 @@ export default function Register() {
     };
     try {
       await saveProfile(profile);
-      saveLocalProfile(profile);
       navigate('/modes');
     } catch (err) {
       console.error('Failed to save profile', err);
