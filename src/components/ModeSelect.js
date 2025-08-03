@@ -5,13 +5,15 @@ import { useNavigate } from 'react-router-dom';
 import feiraImg from '../assets/images/items/apple.png';
 import supermercadoImg from '../assets/images/items/bread.png';
 import festaImg from '../assets/images/items/cake.png';
+import praiaImg from '../assets/images/items/coconut.png';
 
 // List of available phases.  The key matches the JSON file name in
 // `src/phases/` and the label is shown to the player.
 const PHASES = [
   { key: 'feira', label: 'Feira de Rua', img: feiraImg, alt: 'Banca de feira' },
   { key: 'supermercado', label: 'Supermercado', img: supermercadoImg, alt: 'Corredor de supermercado' },
-  { key: 'festa', label: 'Festa de Aniversário', img: festaImg, alt: 'Bolo de festa' }
+  { key: 'festa', label: 'Festa de Aniversário', img: festaImg, alt: 'Bolo de festa' },
+  { key: 'praia', label: 'Praia', img: praiaImg, alt: 'Coco na praia' }
 ];
 
 export default function ModeSelect() {

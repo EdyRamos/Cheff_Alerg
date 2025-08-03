@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loadProfile } from '../services/firestore';
+import { loadNfcPreference } from '../utils/storage';
 import { useStore } from '../store';
 
 /**
@@ -12,9 +13,24 @@ import { useStore } from '../store';
 export default function StartupRedirect() {
   const navigate = useNavigate();
   const setProfile = useStore((s) => s.setProfile);
+
   useEffect(() => {
     (async () => {
-      const profile = await loadProfile();
+      const useNfc = loadNfcPreference();
+      let profile = null;
+      try {
+        profile = await loadProfile({ nfc: useNfc });
+      } catch (err) {
+        console.error('Erro ao carregar o perfil', err);
+        if (useNfc) {
+          alert('Falha ao ler dados do NFC. Prosseguindo sem NFC.');
+        }
+        try {
+          profile = await loadProfile();
+        } catch (_) {
+          profile = null;
+        }
+      }
       setProfile(profile);
       if (profile) {
         navigate('/modes', { replace: true });
