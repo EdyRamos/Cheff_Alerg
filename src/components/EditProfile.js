@@ -65,62 +65,64 @@ export default function EditProfile() {
 
   return (
     <PageLayout>
-      <h1>Editar Perfil</h1>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>
-            Nome:
-            <input
-              type="text"
-              value={nome}
-              onChange={(e) => setNome(e.target.value)}
-              required
-            />
-          </label>
-        </div>
-        <div className="form-group">
-          <label>
-            Idade:
-            <input
-              type="number"
-              min="0"
-              value={idade}
-              onChange={(e) => setIdade(e.target.value)}
-              required
-            />
-          </label>
-        </div>
-        <div className="form-group">
-          <strong>Selecione seus alérgenos:</strong>
-          <ul className="list-unstyled">
-            {ALLERGEN_NAMES.map((name, idx) => (
-              <li key={idx}>
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={selectedBits.includes(idx)}
-                    onChange={() => toggleAlergeno(idx)}
-                  />
-                  {name}
-                </label>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="form-group">
-          <label>
-            <input
-              type="checkbox"
-              checked={useNfc}
-              onChange={(e) => setUseNfc(e.target.checked)}
-            />
-            Usar NFC para armazenar o perfil
-          </label>
-        </div>
-        <button type="submit" disabled={saving}>
-          {saving ? 'Salvando…' : 'Salvar Perfil'}
-        </button>
-      </form>
+      <div className="page-content">
+        <h1>Editar Perfil</h1>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>
+              Nome:
+              <input
+                type="text"
+                value={nome}
+                onChange={(e) => setNome(e.target.value)}
+                required
+              />
+            </label>
+          </div>
+          <div className="form-group">
+            <label>
+              Idade:
+              <input
+                type="number"
+                min="0"
+                value={idade}
+                onChange={(e) => setIdade(e.target.value)}
+                required
+              />
+            </label>
+          </div>
+          <div className="form-group">
+            <strong>Selecione seus alérgenos:</strong>
+            <ul className="list-unstyled">
+              {ALLERGEN_NAMES.map((name, idx) => (
+                <li key={idx}>
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={selectedBits.includes(idx)}
+                      onChange={() => toggleAlergeno(idx)}
+                    />
+                    {name}
+                  </label>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="form-group">
+            <label>
+              <input
+                type="checkbox"
+                checked={useNfc}
+                onChange={(e) => setUseNfc(e.target.checked)}
+              />
+              Usar NFC para armazenar o perfil
+            </label>
+          </div>
+          <button type="submit" disabled={saving}>
+            {saving ? 'Salvando…' : 'Salvar Perfil'}
+          </button>
+        </form>
+      </div>
     </PageLayout>
   );
 }
