@@ -11,19 +11,20 @@ export default function TransitionScreen({
   children,
   message,
   show = true,
-  fade = true,
+  animation = 'fade',
   duration = 500,
+  videoSrc,
   onComplete,
 }) {
   const [visible, setVisible] = useState(show);
-  const [anim, setAnim] = useState(show ? 'fade-in' : 'fade-out');
+  const [anim, setAnim] = useState(show ? `${animation}-in` : `${animation}-out`);
 
   useEffect(() => {
     if (show) {
       setVisible(true);
-      setAnim('fade-in');
-    } else if (fade) {
-      setAnim('fade-out');
+      setAnim(`${animation}-in`);
+    } else if (animation) {
+      setAnim(`${animation}-out`);
       const t = setTimeout(() => {
         setVisible(false);
         onComplete?.();
@@ -33,16 +34,20 @@ export default function TransitionScreen({
       setVisible(false);
       onComplete?.();
     }
-  }, [show, fade, duration, onComplete]);
+  }, [show, animation, duration, onComplete]);
 
   if (!visible) return null;
 
   return (
     <div
-      className={`transition-screen ${fade ? anim : ''}`}
-      style={fade ? { animationDuration: `${duration}ms` } : null}
+      className={`transition-screen ${animation ? anim : ''}`}
+      style={animation ? { animationDuration: `${duration}ms` } : null}
     >
-      {children || <div>{message}</div>}
+      {videoSrc ? (
+        <video src={videoSrc} autoPlay onEnded={onComplete} />
+      ) : (
+        children || <div>{message}</div>
+      )}
     </div>
   );
 }

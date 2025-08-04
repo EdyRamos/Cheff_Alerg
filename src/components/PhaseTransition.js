@@ -14,6 +14,8 @@ export default function PhaseTransition() {
   const { phase } = useParams();
   const navigate = useNavigate();
   const [config, setConfig] = useState(null);
+  const [show, setShow] = useState(true);
+  const [allowSkip, setAllowSkip] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -29,18 +31,40 @@ export default function PhaseTransition() {
 
   useEffect(() => {
     if (config) {
-      const t = setTimeout(() => navigate(`/play/${phase}`), 800);
-      return () => clearTimeout(t);
+      const transition = config.transition || {};
+      const display = transition.duration ?? 3000;
+      const skipDelay = transition.skipAfter ?? 2000;
+
+      const hideTimer = setTimeout(() => setShow(false), display);
+      const skipTimer = setTimeout(() => setAllowSkip(true), skipDelay);
+
+      if (transition.audio) {
+        const audio = new Audio(transition.audio);
+        audio.play();
+      }
+
+      return () => {
+        clearTimeout(hideTimer);
+        clearTimeout(skipTimer);
+      };
     }
-  }, [config, navigate, phase]);
+  }, [config]);
+
+  const handleComplete = () => navigate(`/play/${phase}`);
+  const handleSkip = () => setShow(false);
 
   if (!config) return null;
 
   const transition = config.transition || {};
-  const { text, image } = transition;
+  const { text, image, tip, animation, video } = transition;
 
   return (
-    <TransitionScreen>
+    <TransitionScreen
+      show={show}
+      animation={animation}
+      videoSrc={video}
+      onComplete={handleComplete}
+    >
       <div className="phase-transition" style={{ textAlign: 'center' }}>
         {image && (
           <img
@@ -50,6 +74,12 @@ export default function PhaseTransition() {
           />
         )}
         {text && <h2>{text}</h2>}
+        {tip && <p>{tip}</p>}
+        {allowSkip && (
+          <button onClick={handleSkip} style={{ marginTop: '1rem' }}>
+            Pular
+          </button>
+        )}
       </div>
     </TransitionScreen>
   );
