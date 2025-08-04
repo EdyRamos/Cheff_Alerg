@@ -42,6 +42,7 @@ export default class PhaserGameEngine {
         this.tipCard = null;
         this.lifeIcons = [];
         this.chef = null;
+        this.spawnTimer = null;
       }
       preload() {
         phaseConfig.items.forEach((item) => {
@@ -159,14 +160,36 @@ export default class PhaserGameEngine {
         };
         pauseButton.on('pointerdown', launchPause);
         this.input.keyboard.on('keydown-P', launchPause);
-        this.time.addEvent({
+        const baseSpawn =
+          phaseConfig.itemSpawnRate || phaseConfig.spawnRate || 1500;
+        const baseSimultaneous = phaseConfig.simultaneous || 2;
+        // Schedule item spawning and adapt difficulty over time.
+        const spawnCycle = () => {
+          // Use recent accuracy to adjust difficulty: high accuracy
+          // results in faster spawns and more simultaneous items,
+          // while low accuracy slows the game down and reduces items.
+          const { spawnRate, simultaneous } = this.difficulty.getParameters(
+            baseSpawn,
+            baseSimultaneous
+          );
+          this.spawnRate = spawnRate;
+          this.simultaneous = simultaneous;
+
+          if (this.activeItems.length < this.simultaneous) {
+            this.spawnItem();
+          }
+
+          // Respect the new spawn rate by scheduling the next cycle accordingly.
+          this.spawnTimer = this.time.addEvent({
+            delay: this.spawnRate,
+            callback: spawnCycle,
+          });
+        };
+
+        // Kick off the first spawn cycle.
+        this.spawnTimer = this.time.addEvent({
           delay: this.spawnRate,
-          loop: true,
-          callback: () => {
-            if (this.activeItems.length < this.simultaneous) {
-              this.spawnItem();
-            }
-          },
+          callback: spawnCycle,
         });
         if (this.duration) {
           this.time.delayedCall(this.duration * 1000, () => {
@@ -223,17 +246,23 @@ export default class PhaserGameEngine {
           this.updateLives();
           this.showTip();
           this.animateChef('miss');
+          // Log incorrect taps to lower accuracy.
+          this.difficulty.record(false);
         } else if (item.trap) {
           this.score = Math.max(0, this.score - (item.penalty || 10));
           this.sound.play('allergenSound');
           this.updateScore();
           this.animateChef('miss');
+          // Traps also count as incorrect actions.
+          this.difficulty.record(false);
         } else {
           const bonus = item.bonus || 0;
           this.score += 10 + bonus;
           this.sound.play('safeSound');
           this.updateScore();
           this.animateChef('collect');
+          // Correct taps increase accuracy and difficulty.
+          this.difficulty.record(true);
         }
         sprite.destroy();
         this.activeItems = this.activeItems.filter((i) => i !== sprite);
