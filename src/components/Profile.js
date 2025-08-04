@@ -36,20 +36,22 @@ export default function Profile() {
     <>
       <NavBar />
       <PageLayout>
-        <h1>Seu Perfil</h1>
-        <p>
-          <strong>Nome:</strong> {profile.nome}
-        </p>
-        <p>
-          <strong>Idade:</strong> {profile.idade}
-        </p>
-        <p>
-          <strong>Alérgenos selecionados:</strong>{' '}
-          {selected.length > 0 ? selected.join(', ') : 'Nenhum'}
-        </p>
-        <div style={{ display: 'flex', gap: '1rem' }}>
-          <button onClick={() => navigate('/modes')}>Selecionar Fase</button>
-          <button onClick={() => navigate('/profile/edit')}>Editar perfil</button>
+        <div className="page-content">
+          <h1>Seu Perfil</h1>
+          <p>
+            <strong>Nome:</strong> {profile.nome}
+          </p>
+          <p>
+            <strong>Idade:</strong> {profile.idade}
+          </p>
+          <p>
+            <strong>Alérgenos selecionados:</strong>{' '}
+            {selected.length > 0 ? selected.join(', ') : 'Nenhum'}
+          </p>
+          <div className="flex-gap">
+            <button onClick={() => navigate('/modes')}>Selecionar Fase</button>
+            <button onClick={() => navigate('/profile/edit')}>Editar perfil</button>
+          </div>
         </div>
       </PageLayout>
     </>
