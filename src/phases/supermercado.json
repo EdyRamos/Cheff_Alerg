@@ -1,4 +1,8 @@
 {
+  "transition": {
+    "text": "Hora das compras no Supermercado!",
+    "image": "/assets/images/bg/supermercado.png"
+  },
   "background": "/assets/images/bg/supermercado.png",
   "spawnRate": 1400,
   "simultaneous": 3,

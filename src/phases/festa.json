@@ -1,4 +1,8 @@
 {
+  "transition": {
+    "text": "Festa de Aniversário chegando!",
+    "image": "/assets/images/bg/festa.png"
+  },
   "background": "/assets/images/bg/festa.png",
   "spawnRate": 1000,
   "simultaneous": 3,
