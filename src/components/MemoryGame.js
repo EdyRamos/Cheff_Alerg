@@ -26,6 +26,9 @@ export default function MemoryGame() {
   const cachedPhaseConfig = useStore((s) => s.phases[phase]);
   const setPhaseConfig  = useStore((s) => s.setPhaseConfig);
 
+  // Ordem das fases para permitir navegação sequencial
+  const PHASE_SEQUENCE = ['feira', 'supermercado', 'festa', 'praia'];
+
   // Carrega a configuração da fase, cacheando no Zustand
   useEffect(() => {
     (async () => {
@@ -78,7 +81,17 @@ export default function MemoryGame() {
   };
 
   const handleReturnToMenu = () => navigateWithTransition('Voltando ao menu...');
-  const handleGameOver = () => navigateWithTransition('Fim de jogo!');
+
+  // Após o término de uma fase, direciona para a tela de transição
+  const handlePhaseComplete = () => {
+    const currentIndex = PHASE_SEQUENCE.indexOf(phase);
+    const nextPhase = PHASE_SEQUENCE[currentIndex + 1];
+    if (nextPhase) {
+      navigate(`/transition/${nextPhase}`);
+    } else {
+      navigateWithTransition('Fim de jogo!');
+    }
+  };
 
   if (!phaseConfig || !profile) return <LoadingScreen />;
 
@@ -87,7 +100,7 @@ export default function MemoryGame() {
       <GameWrapper
         phaseConfig={phaseConfig}
         bitmask={profile.bitmask || 0}
-        onGameOver={handleGameOver}
+        onGameOver={handlePhaseComplete}
         onReturnToMenu={handleReturnToMenu}
       />
       {transitionMsg && <TransitionScreen message={transitionMsg} />}
