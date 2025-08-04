@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import FadeIn from './FadeIn';
 import { useStore } from '../store';
+import NavBar from './NavBar';
 
 // Thumbnails for each phase
 // Assets are served from the public folder using absolute paths
@@ -25,6 +26,7 @@ export default function CareerMap() {
 
   return (
     <FadeIn>
+      <NavBar />
       <div
         style={{
           backgroundImage: 'url(/assets/images/ui/mode_select_bg.jpg)',

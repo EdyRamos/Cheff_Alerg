@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import FadeIn from './FadeIn';
+import NavBar from './NavBar';
 
 /**
  * Tela inicial que apresenta rapidamente a premissa do jogo.
@@ -10,6 +11,7 @@ export default function Intro() {
   const handleStart = () => navigate('/startup');
   return (
     <FadeIn>
+      <NavBar />
       <div
         style={{
           backgroundImage: 'url(/assets/images/ui/intro_bg.jpg)',
