@@ -9,7 +9,10 @@
     "animation": "slide"
   },
   "background": "/assets/images/bg/feira_day.png",
-  "spawnRate": 1500,
+  "music": "/assets/audio/background.ogg",
+  "speed": 1,
+  "itemSpawnRate": 1500,
+  "duration": 60,
   "simultaneous": 2,
   "itemScale": 0.09,
   "items": [
@@ -43,5 +46,9 @@
       "spriteUrl": "/assets/images/items/strawberry.png",
       "bitmaskBit": 11
     }
+  ],
+  "tips": [
+    "Amendoim e soja são alergênicos comuns na feira.",
+    "Fique de olho em castanhas escondidas em doces."
   ]
 }

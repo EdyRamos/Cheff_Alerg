@@ -26,6 +26,7 @@ export default class GameScene extends Phaser.Scene {
     this.speed = phaseConfig.speed || 1;
     this.duration = phaseConfig.duration || null;
     this.tips = phaseConfig.tips || [];
+    this.music = phaseConfig.music || '/assets/audio/background.ogg';
     this.tipText = null;
     this.tipCard = null;
     this.lifeIcons = [];
@@ -52,8 +53,7 @@ export default class GameScene extends Phaser.Scene {
     if (phaseConfig.background) {
       this.load.image('background', phaseConfig.background);
     }
-    const music = phaseConfig.music || '/assets/audio/background.ogg';
-    this.load.audio('bgMusic', music);
+    this.load.audio('bgMusic', this.music);
     this.load.audio('safeSound', '/assets/audio/safe.ogg');
     this.load.audio('allergenSound', '/assets/audio/allergen.ogg');
   }
