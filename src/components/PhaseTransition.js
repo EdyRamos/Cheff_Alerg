@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import TransitionScreen from './TransitionScreen';
+import { DEFAULT_TRANSITION } from '../constants/transitionThemes';
 
 /**
  * PhaseTransition
@@ -31,16 +32,15 @@ export default function PhaseTransition() {
 
   useEffect(() => {
     if (config) {
-      const transition = config.transition || {};
-      const display = transition.duration ?? 3000;
-      const skipDelay = transition.skipAfter ?? 2000;
+      const transition = { ...DEFAULT_TRANSITION, ...(config.transition || {}) };
+      const { duration, skipAfter, audio } = transition;
 
-      const hideTimer = setTimeout(() => setShow(false), display);
-      const skipTimer = setTimeout(() => setAllowSkip(true), skipDelay);
+      const hideTimer = setTimeout(() => setShow(false), duration);
+      const skipTimer = setTimeout(() => setAllowSkip(true), skipAfter);
 
-      if (transition.audio) {
-        const audio = new Audio(transition.audio);
-        audio.play();
+      if (audio) {
+        const sound = new Audio(audio);
+        sound.play();
       }
 
       return () => {
@@ -55,7 +55,7 @@ export default function PhaseTransition() {
 
   if (!config) return null;
 
-  const transition = config.transition || {};
+  const transition = { ...DEFAULT_TRANSITION, ...(config.transition || {}) };
   const { text, image, tip, animation, video } = transition;
 
   return (

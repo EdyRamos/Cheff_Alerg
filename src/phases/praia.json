@@ -2,7 +2,12 @@
   "phaseId": "praia",
   "transition": {
     "text": "Vamos relaxar na Praia!",
-    "image": "/assets/images/bg/praia.png"
+    "image": "/assets/images/bg/praia.png",
+    "animation": "fade",
+    "audio": "/assets/audio/safe.ogg",
+    "duration": 3000,
+    "skipAfter": 2000,
+    "tip": "Dica: frutos do mar podem conter alérgenos!"
   },
   "background": "/assets/images/bg/praia.png",
   "music": "/assets/audio/beach_loop.mp3",

@@ -1,7 +1,12 @@
 {
   "transition": {
     "text": "Hora das compras no Supermercado!",
-    "image": "/assets/images/bg/supermercado.png"
+    "image": "/assets/images/bg/supermercado.png",
+    "animation": "fade",
+    "audio": "/assets/audio/safe.ogg",
+    "duration": 3000,
+    "skipAfter": 2000,
+    "tip": "Dica: leia os rótulos com atenção!"
   },
   "background": "/assets/images/bg/supermercado.png",
   "spawnRate": 1400,
