@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import GameWrapper from './GameWrapper';
 import LoadingScreen from './LoadingScreen';
+import TransitionScreen from './TransitionScreen';
 import { useStore } from '../store';
 import { loadProfile } from '../services/firestore';
 import { loadNfcPreference } from '../utils/storage';
@@ -16,6 +17,7 @@ export default function MemoryGame() {
   const { phase } = useParams();
   const navigate = useNavigate();
   const [phaseConfig, setPhaseConfigState] = useState(null);
+  const [transitionMsg, setTransitionMsg] = useState('');
 
   // Zustand store
   const profile         = useStore((s) => s.profile);
@@ -70,20 +72,25 @@ export default function MemoryGame() {
     }
   }, [profile, setProfile]);
 
-  const handleReturnToMenu = () => {
-    navigate('/modes');
-  };
-  const handleGameOver = () => {
-    handleReturnToMenu();
+  const navigateWithTransition = (msg) => {
+    setTransitionMsg(msg);
+    setTimeout(() => navigate('/modes'), 800);
   };
 
+  const handleReturnToMenu = () => navigateWithTransition('Voltando ao menu...');
+  const handleGameOver = () => navigateWithTransition('Fim de jogo!');
+
   if (!phaseConfig || !profile) return <LoadingScreen />;
+
   return (
-    <GameWrapper
-      phaseConfig={phaseConfig}
-      bitmask={profile.bitmask || 0}
-      onGameOver={handleGameOver}
-      onReturnToMenu={handleReturnToMenu}
-    />
+    <>
+      <GameWrapper
+        phaseConfig={phaseConfig}
+        bitmask={profile.bitmask || 0}
+        onGameOver={handleGameOver}
+        onReturnToMenu={handleReturnToMenu}
+      />
+      {transitionMsg && <TransitionScreen message={transitionMsg} />}
+    </>
   );
 }
