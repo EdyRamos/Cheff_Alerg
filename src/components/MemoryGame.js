@@ -6,6 +6,7 @@ import TransitionScreen from './TransitionScreen';
 import { useStore } from '../store';
 import { loadProfile } from '../services/firestore';
 import { loadNfcPreference } from '../utils/storage';
+import { PHASES } from './ModeSelect';
 
 /**
  * MemoryGame
@@ -20,11 +21,13 @@ export default function MemoryGame() {
   const [transitionMsg, setTransitionMsg] = useState('');
 
   // Zustand store
-  const profile         = useStore((s) => s.profile);
-  const setProfile      = useStore((s) => s.setProfile);
-  const setCurrentPhase = useStore((s) => s.setCurrentPhase);
+  const profile           = useStore((s) => s.profile);
+  const setProfile        = useStore((s) => s.setProfile);
+  const setCurrentPhase   = useStore((s) => s.setCurrentPhase);
   const cachedPhaseConfig = useStore((s) => s.phases[phase]);
-  const setPhaseConfig  = useStore((s) => s.setPhaseConfig);
+  const setPhaseConfig    = useStore((s) => s.setPhaseConfig);
+  const unlockPhase       = useStore((s) => s.unlockPhase);
+  const unlockedPhases    = useStore((s) => s.unlockedPhases);
 
   // Ordem das fases para permitir navegação sequencial
   const PHASE_SEQUENCE = ['feira', 'supermercado', 'festa', 'praia'];
@@ -82,12 +85,15 @@ export default function MemoryGame() {
 
   const handleReturnToMenu = () => navigateWithTransition('Voltando ao menu...');
 
-  // Após o término de uma fase, direciona para a tela de transição
+  // Após o término de uma fase, destrava próxima fase e direciona para a tela de transição
   const handlePhaseComplete = () => {
-    const currentIndex = PHASE_SEQUENCE.indexOf(phase);
-    const nextPhase = PHASE_SEQUENCE[currentIndex + 1];
-    if (nextPhase) {
-      navigate(`/transition/${nextPhase}`);
+    const idx = PHASES.findIndex((p) => p.key === phase);
+    const next = PHASES[idx + 1];
+    if (next && !unlockedPhases.includes(next.key)) {
+      unlockPhase(next.key);
+    }
+    if (next) {
+      navigate(`/transition/${next.key}`);
     } else {
       navigateWithTransition('Fim de jogo!');
     }
