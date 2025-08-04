@@ -2,6 +2,7 @@
   "background": "/assets/images/bg/festa.png",
   "spawnRate": 1000,
   "simultaneous": 3,
+  "itemScale": 0.1,
   "items": [
     {
       "key": "cake",
