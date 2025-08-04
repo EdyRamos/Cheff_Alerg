@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loadProfile } from '../services/firestore';
 import { useStore } from '../store';
+import LoadingScreen from './LoadingScreen';
 
 // Lookup table for allergen names corresponding to each bit.
 const ALLERGEN_NAMES = [
@@ -37,7 +38,7 @@ export default function Profile() {
   }, [profile, setProfile]);
 
   if (!profile) {
-    return <div style={{ padding: '2rem' }}>Carregando…</div>;
+    return <LoadingScreen />;
   }
 
   // Compute a list of allergens from the bitmask for display.

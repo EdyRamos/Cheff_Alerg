@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { loadProfile } from '../services/firestore';
 import { loadNfcPreference } from '../utils/storage';
 import { useStore } from '../store';
+import LoadingScreen from './LoadingScreen';
 
 /**
  * Component that checks for an existing profile on load and
@@ -40,5 +41,5 @@ export default function StartupRedirect() {
     })();
   }, [navigate, setProfile]);
 
-  return <div style={{ padding: '2rem' }}>Carregando…</div>;
+  return <LoadingScreen />;
 }

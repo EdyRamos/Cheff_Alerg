@@ -69,11 +69,13 @@ export default class PhaserGameEngine {
       }
       create() {
         const { width, height } = this.scale;
+        const chefSize = width * 0.15;
         if (phaseConfig.background) {
-          this.add
-            .image(0, 0, 'background')
-            .setOrigin(0)
-            .setDisplaySize(width, height);
+          const bg = this.add.image(width / 2, height / 2, 'background');
+          const scaleX = width / bg.width;
+          const scaleY = height / bg.height;
+          const scale = Math.max(scaleX, scaleY);
+          bg.setScale(scale).setScrollFactor(0);
         }
         this.bgMusic = this.sound.add('bgMusic', { loop: true });
         this.bgMusic.play();
@@ -142,7 +144,8 @@ export default class PhaserGameEngine {
         // Chef sprite (ANIMAÇÃO)
         this.chef = this.add
           .sprite(width / 2, height - 100, 'chefIdle')
-          .setDepth(5);
+          .setDepth(5)
+          .setDisplaySize(chefSize, chefSize);
         this.tipTimer = null;
         // Pause
         const pauseButton = this.add
@@ -182,8 +185,11 @@ export default class PhaserGameEngine {
       spawnItem() {
         const { width } = this.scale;
         const item = Phaser.Utils.Array.GetRandom(phaseConfig.items);
-        const x = Phaser.Math.Between(32, width - 32);
-        const sprite = this.physics.add.image(x, -32, item.key);
+        const sizeRatio = phaseConfig.itemScale || 0.1;
+        const itemSize = phaseConfig.itemSize || width * sizeRatio;
+        const x = Phaser.Math.Between(itemSize / 2, width - itemSize / 2);
+        const sprite = this.physics.add.image(x, -itemSize / 2, item.key);
+        sprite.setDisplaySize(itemSize, itemSize);
         sprite.setData('itemData', item);
         sprite.setVelocityY(100 * this.speed);
         sprite.setInteractive();
@@ -342,13 +348,26 @@ export default class PhaserGameEngine {
         default: 'arcade',
         arcade: { gravity: { y: 0 }, debug: false },
       },
+      scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+      },
     });
+
+    this.resizeHandler = () => {
+      this.game.scale.resize(window.innerWidth, window.innerHeight);
+    };
+    window.addEventListener('resize', this.resizeHandler);
   }
   destroy() {
     if (this.game) {
       this.bgMusic?.stop();
       this.game.destroy(true);
       this.game = null;
+    }
+    if (this.resizeHandler) {
+      window.removeEventListener('resize', this.resizeHandler);
+      this.resizeHandler = null;
     }
   }
 }
