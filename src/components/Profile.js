@@ -4,8 +4,7 @@ import { loadProfile } from '../services/firestore';
 import { useStore } from '../store';
 import LoadingScreen from './LoadingScreen';
 import { ALLERGEN_NAMES } from '../constants/allergens';
-
-// Lookup table for allergen names corresponding to each bit.
+import NavBar from './NavBar';
 
 /**
  * Displays the saved user profile along with a list of allergens to avoid.
@@ -33,22 +32,25 @@ export default function Profile() {
   const selected = ALLERGEN_NAMES.slice(0, bitCount).filter((_, idx) => (profile.bitmask & (1 << idx)) !== 0);
 
   return (
-    <div className="page-container">
-      <h1>Seu Perfil</h1>
-      <p>
-        <strong>Nome:</strong> {profile.nome}
-      </p>
-      <p>
-        <strong>Idade:</strong> {profile.idade}
-      </p>
-      <p>
-        <strong>Alérgenos selecionados:</strong>{' '}
-        {selected.length > 0 ? selected.join(', ') : 'Nenhum'}
-      </p>
-      <div className="flex-gap">
-        <button onClick={() => navigate('/modes')}>Selecionar Fase</button>
-        <button onClick={() => navigate('/profile/edit')}>Editar perfil</button>
+    <>
+      <NavBar />
+      <div style={{ padding: '2rem' }}>
+        <h1>Seu Perfil</h1>
+        <p>
+          <strong>Nome:</strong> {profile.nome}
+        </p>
+        <p>
+          <strong>Idade:</strong> {profile.idade}
+        </p>
+        <p>
+          <strong>Alérgenos selecionados:</strong>{' '}
+          {selected.length > 0 ? selected.join(', ') : 'Nenhum'}
+        </p>
+        <div style={{ display: 'flex', gap: '1rem' }}>
+          <button onClick={() => navigate('/modes')}>Selecionar Fase</button>
+          <button onClick={() => navigate('/profile/edit')}>Editar perfil</button>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

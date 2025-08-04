@@ -7,6 +7,7 @@ import { useStore } from '../store';
 import { loadProfile } from '../services/firestore';
 import { loadNfcPreference } from '../utils/storage';
 import { PHASES } from './ModeSelect';
+import NavBar from './NavBar';
 
 /**
  * MemoryGame
@@ -103,6 +104,7 @@ export default function MemoryGame() {
 
   return (
     <>
+      <NavBar />
       <GameWrapper
         phaseConfig={phaseConfig}
         bitmask={profile.bitmask || 0}
