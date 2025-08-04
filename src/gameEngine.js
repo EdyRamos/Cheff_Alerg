@@ -348,13 +348,26 @@ export default class PhaserGameEngine {
         default: 'arcade',
         arcade: { gravity: { y: 0 }, debug: false },
       },
+      scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+      },
     });
+
+    this.resizeHandler = () => {
+      this.game.scale.resize(window.innerWidth, window.innerHeight);
+    };
+    window.addEventListener('resize', this.resizeHandler);
   }
   destroy() {
     if (this.game) {
       this.bgMusic?.stop();
       this.game.destroy(true);
       this.game = null;
+    }
+    if (this.resizeHandler) {
+      window.removeEventListener('resize', this.resizeHandler);
+      this.resizeHandler = null;
     }
   }
 }
