@@ -7,6 +7,7 @@ import Tutorial from './components/Tutorial';
 import MemoryGame from './components/MemoryGame';
 import Intro from './components/Intro';
 import StartupRedirect from './components/StartupRedirect';
+import PhaseTransition from './components/PhaseTransition';
 
 /**
  * The top level application component.  It defines the routes
@@ -26,6 +27,7 @@ export default function App() {
       <Route path="/modes" element={<ModeSelect />} />
       <Route path="/tutorial" element={<Tutorial />} />
       <Route path="/play/:phase" element={<MemoryGame />} />
+      <Route path="/transition/:phase" element={<PhaseTransition />} />
       <Route path="*" element={<div style={{ padding: '1rem' }}>Page not found</div>} />
     </Routes>
   );
