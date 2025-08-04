@@ -1,7 +1,12 @@
 {
   "transition": {
     "text": "Bem-vindo à Feira!",
-    "image": "/assets/images/bg/feira_day.png"
+    "image": "/assets/images/bg/feira_day.png",
+    "tip": "Dica: fique atento aos itens perigosos!",
+    "audio": "/assets/audio/safe.ogg",
+    "duration": 4000,
+    "skipAfter": 2000,
+    "animation": "slide"
   },
   "background": "/assets/images/bg/feira_day.png",
   "spawnRate": 1500,
