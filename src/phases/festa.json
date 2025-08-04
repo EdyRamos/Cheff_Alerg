@@ -4,7 +4,10 @@
     "image": "/assets/images/bg/festa.png"
   },
   "background": "/assets/images/bg/festa.png",
-  "spawnRate": 1000,
+  "music": "/assets/audio/background.ogg",
+  "speed": 1.3,
+  "itemSpawnRate": 1000,
+  "duration": 80,
   "simultaneous": 3,
   "itemScale": 0.1,
   "items": [
@@ -38,5 +41,9 @@
       "bitmaskBit": 11,
       "bonus": 20
     }
+  ],
+  "tips": [
+    "Bolos e sorvetes quase sempre contêm leite e ovos.",
+    "Doces coloridos podem ter traços de amendoim."
   ]
 }

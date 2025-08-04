@@ -4,7 +4,10 @@
     "image": "/assets/images/bg/supermercado.png"
   },
   "background": "/assets/images/bg/supermercado.png",
-  "spawnRate": 1400,
+  "music": "/assets/audio/background.ogg",
+  "speed": 1.1,
+  "itemSpawnRate": 1400,
+  "duration": 70,
   "simultaneous": 3,
   "itemScale": 0.09,
   "items": [
@@ -46,5 +49,9 @@
       "bitmaskBit": 10,
       "bonus": 15
     }
+  ],
+  "tips": [
+    "Leia os rótulos para evitar glúten e lactose.",
+    "Produtos industrializados podem esconder alergênicos."
   ]
 }
