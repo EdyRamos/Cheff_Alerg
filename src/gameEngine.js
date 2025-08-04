@@ -3,18 +3,14 @@ import DifficultyManager from './utils/DifficultyManager';
 
 export default class PhaserGameEngine {
   constructor({ phaseConfig, bitmask, onGameOver, onReturnToMenu }) {
-    this.phaseConfig    = phaseConfig;
-    this.bitmask        = bitmask;
-    this.onGameOver     = onGameOver;
+    this.phaseConfig = phaseConfig;
+    this.bitmask = bitmask;
+    this.onGameOver = onGameOver;
     this.onReturnToMenu = onReturnToMenu;
-    this.game           = null;
-    this.bgMusic        = null;
+    this.game = null;
+    this.bgMusic = null;
   }
 
-  /**
-   * Initialize the Phaser game and mount it into the provided DOM
-   * element.
-   */
   init(parent) {
     if (this.game) return;
     const engine = this;
@@ -23,18 +19,18 @@ export default class PhaserGameEngine {
     class GameScene extends Phaser.Scene {
       constructor() {
         super({ key: 'GameScene' });
-        this.score        = 0;
-        this.lives        = 3;
-        this.activeItems  = [];
-        this.lastSpawn    = 0;
-        this.difficulty   = new DifficultyManager();
-        this.spawnRate    =
+        this.score = 0;
+        this.lives = 3;
+        this.activeItems = [];
+        this.lastSpawn = 0;
+        this.difficulty = new DifficultyManager();
+        this.spawnRate =
           phaseConfig.itemSpawnRate || phaseConfig.spawnRate || 1500;
         this.simultaneous = phaseConfig.simultaneous || 2;
-        this.speed        = phaseConfig.speed || 1;
-        this.duration     = phaseConfig.duration || null;
-        this.tips         = phaseConfig.tips || [];
-        this.tipText      = null;
+        this.speed = phaseConfig.speed || 1;
+        this.duration = phaseConfig.duration || null;
+        this.tips = phaseConfig.tips || [];
+        this.tipText = null;
       }
       preload() {
         phaseConfig.items.forEach((item) => {
@@ -51,24 +47,24 @@ export default class PhaserGameEngine {
       }
       create() {
         const { width, height } = this.scale;
-
-        // Render background if available
         if (phaseConfig.background) {
           this.add
             .image(0, 0, 'background')
             .setOrigin(0)
             .setDisplaySize(width, height);
         }
-        // Background music
         this.bgMusic = this.sound.add('bgMusic', { loop: true });
         this.bgMusic.play();
         engine.bgMusic = this.bgMusic;
-
-        // Score HUD
-        this.scoreText = this.add.text(16, 16, `Pontuação: ${this.score}`, {
-          fontSize: '24px',
-          fill: '#fff',
-        });
+        this.scoreText = this.add.text(
+          16,
+          16,
+          `Pontuação: ${this.score}`,
+          {
+            fontSize: '24px',
+            fill: '#fff',
+          }
+        );
         this.scoreBg = this.add
           .rectangle(
             this.scoreText.x - 8,
@@ -80,7 +76,6 @@ export default class PhaserGameEngine {
           )
           .setOrigin(0, 0)
           .setDepth(this.scoreText.depth - 1);
-        // Lives HUD
         this.lifeText = this.add.text(0, 16, `Vidas: ${this.lives}`, {
           fontSize: '24px',
           fill: '#fff',
@@ -97,9 +92,19 @@ export default class PhaserGameEngine {
           )
           .setOrigin(0, 0)
           .setDepth(this.lifeText.depth - 1);
-        // Pause button
+        this.tipText = this.add
+          .text(width / 2, height - 40, '', {
+            fontSize: '20px',
+            fill: '#fff',
+          })
+          .setOrigin(0.5)
+          .setDepth(10);
+        this.tipTimer = null;
         const pauseButton = this.add
-          .text(width - 80, 50, 'Pausar', { fontSize: '20px', fill: '#000' })
+          .text(width - 80, 50, 'Pausar', {
+            fontSize: '20px',
+            fill: '#000',
+          })
           .setInteractive();
         const launchPause = () => {
           this.bgMusic?.pause();
@@ -108,6 +113,15 @@ export default class PhaserGameEngine {
         };
         pauseButton.on('pointerdown', launchPause);
         this.input.keyboard.on('keydown-P', launchPause);
+        this.time.addEvent({
+          delay: this.spawnRate,
+          loop: true,
+          callback: () => {
+            if (this.activeItems.length < this.simultaneous) {
+              this.spawnItem();
+            }
+          },
+        });
         if (this.duration) {
           this.time.delayedCall(this.duration * 1000, () => {
             this.scene.pause();
@@ -122,20 +136,92 @@ export default class PhaserGameEngine {
           });
         }
       }
-      // ... resto do código (sem alteração)
-      // (o restante não tinha conflito)
-      // Pode copiar exatamente igual do seu arquivo base
-      // (mantive só o início acima porque o conflito estava só nesse ponto!)
-      // ...
+      spawnItem() {
+        const { width } = this.scale;
+        const item = Phaser.Utils.Array.GetRandom(phaseConfig.items);
+        const x = Phaser.Math.Between(32, width - 32);
+        const sprite = this.physics.add.image(x, -32, item.key);
+        sprite.setData('itemData', item);
+        sprite.setVelocityY(100 * this.speed);
+        sprite.setInteractive();
+        sprite.on('pointerdown', () => {
+          this.handleItemClick(sprite);
+        });
+        this.activeItems.push(sprite);
+      }
+      handleItemClick(sprite) {
+        const item = sprite.getData('itemData');
+        const bit = item.bitmaskBit;
+        const isAllergen = (bitmask & (1 << bit)) !== 0;
+        if (isAllergen) {
+          this.lives -= 1;
+          this.sound.play('allergenSound');
+          this.updateLives();
+          this.showTip();
+        } else {
+          this.score += 10;
+          this.sound.play('safeSound');
+          this.updateScore();
+        }
+        sprite.destroy();
+        this.activeItems = this.activeItems.filter((i) => i !== sprite);
+        if (this.lives <= 0) {
+          this.endGame();
+        }
+      }
+      updateScore() {
+        this.scoreText.setText(`Pontuação: ${this.score}`);
+      }
+      updateLives() {
+        this.lifeText.setText(`Vidas: ${this.lives}`);
+      }
+      showTip() {
+        if (this.tips.length === 0) return;
+        const tip = Phaser.Utils.Array.GetRandom(this.tips);
+        this.tipText.setText(tip);
+        if (this.tipTimer) this.tipTimer.remove(false);
+        this.tipTimer = this.time.addEvent({
+          delay: 5000,
+          callback: () => {
+            this.tipText.setText('');
+            this.tipTimer = null;
+          },
+        });
+      }
+      endGame() {
+        this.scene.pause();
+        this.bgMusic.stop();
+        this.add
+          .text(
+            this.scale.width / 2,
+            this.scale.height / 2,
+            'Fim de Jogo',
+            {
+              fontSize: '32px',
+              fill: '#f00',
+            }
+          )
+          .setOrigin(0.5);
+        if (typeof onGameOver === 'function') onGameOver();
+      }
+      update() {
+        this.activeItems.forEach((sprite) => {
+          if (sprite.y > this.scale.height + 32) {
+            sprite.destroy();
+            this.activeItems = this.activeItems.filter((i) => i !== sprite);
+          }
+        });
+      }
     }
-
     class PauseScene extends Phaser.Scene {
       constructor() {
         super({ key: 'PauseScene' });
       }
       create() {
         const { width, height } = this.scale;
-        this.add.rectangle(0, 0, width, height, 0x000000, 0.5).setOrigin(0);
+        this.add
+          .rectangle(0, 0, width, height, 0x000000, 0.5)
+          .setOrigin(0);
         this.add
           .text(width / 2, height / 2 - 40, 'Jogo Pausado', {
             fontSize: '32px',
@@ -175,16 +261,18 @@ export default class PhaserGameEngine {
         });
       }
     }
-
     this.game = new Phaser.Game({
       type: Phaser.AUTO,
       width: window.innerWidth,
       height: window.innerHeight,
       parent,
       scene: [new GameScene(), new PauseScene()],
+      physics: {
+        default: 'arcade',
+        arcade: { gravity: { y: 0 }, debug: false },
+      },
     });
   }
-
   destroy() {
     if (this.game) {
       this.bgMusic?.stop();
