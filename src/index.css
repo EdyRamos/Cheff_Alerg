@@ -47,3 +47,35 @@ body {
   object-fit: contain;
   margin-bottom: 0.5rem;
 }
+/* Transition screen overlay */
+.transition-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  z-index: 1000;
+  animation-fill-mode: forwards;
+}
+
+.transition-screen.fade-in {
+  animation-name: fadeIn;
+}
+
+.transition-screen.fade-out {
+  animation-name: fadeOut;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}

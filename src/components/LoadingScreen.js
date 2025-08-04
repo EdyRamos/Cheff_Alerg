@@ -1,24 +1,12 @@
 import React from 'react';
+import TransitionScreen from './TransitionScreen';
 
 /**
  * LoadingScreen
  *
- * Displayed while game assets such as the phase configuration or
- * player profile bitmask are being loaded.  Keeps the user informed
- * that something is happening instead of rendering nothing.
+ * Simple wrapper around TransitionScreen with a default loading message.
+ * Useful for async phases like asset or profile loading.
  */
-export default function LoadingScreen() {
-  return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100%',
-        fontSize: '1.5rem',
-      }}
-    >
-      Carregando...
-    </div>
-  );
+export default function LoadingScreen({ message = 'Carregando...' }) {
+  return <TransitionScreen message={message} />;
 }
