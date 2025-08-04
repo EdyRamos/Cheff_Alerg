@@ -31,12 +31,16 @@ export default class PhaserGameEngine {
         this.duration = phaseConfig.duration || null;
         this.tips = phaseConfig.tips || [];
         this.tipText = null;
+        this.chef = null;
       }
       preload() {
         phaseConfig.items.forEach((item) => {
           this.load.image(item.key, item.spriteUrl);
         });
         this.load.image('missing', '/assets/images/missing.png');
+        this.load.image('chefIdle', '/assets/images/chef/idle.png');
+        this.load.image('chefCollect', '/assets/images/chef/collect.png');
+        this.load.image('chefMiss', '/assets/images/chef/miss.png');
         if (phaseConfig.background) {
           this.load.image('background', phaseConfig.background);
         }
@@ -99,6 +103,9 @@ export default class PhaserGameEngine {
           })
           .setOrigin(0.5)
           .setDepth(10);
+        this.chef = this.add
+          .sprite(width / 2, height - 100, 'chefIdle')
+          .setDepth(5);
         this.tipTimer = null;
         const pauseButton = this.add
           .text(width - 80, 50, 'Pausar', {
@@ -149,6 +156,20 @@ export default class PhaserGameEngine {
         });
         this.activeItems.push(sprite);
       }
+      animateChef(state) {
+        if (!this.chef) return;
+        const textures = {
+          idle: 'chefIdle',
+          collect: 'chefCollect',
+          miss: 'chefMiss',
+        };
+        this.chef.setTexture(textures[state] || textures.idle);
+        if (state !== 'idle') {
+          this.time.delayedCall(500, () => {
+            this.chef.setTexture('chefIdle');
+          });
+        }
+      }
       handleItemClick(sprite) {
         const item = sprite.getData('itemData');
         const bit = item.bitmaskBit;
@@ -158,10 +179,12 @@ export default class PhaserGameEngine {
           this.sound.play('allergenSound');
           this.updateLives();
           this.showTip();
+          this.animateChef('miss');
         } else {
           this.score += 10;
           this.sound.play('safeSound');
           this.updateScore();
+          this.animateChef('collect');
         }
         sprite.destroy();
         this.activeItems = this.activeItems.filter((i) => i !== sprite);
