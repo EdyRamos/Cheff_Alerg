@@ -24,35 +24,26 @@ export default function CareerMap() {
   return (
     <FadeIn>
       <NavBar />
-      <div
-        style={{
-          backgroundImage: 'url(/assets/images/ui/mode_select_bg.jpg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          minHeight: '100vh',
-          padding: '2rem',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center'
-        }}
-      >
-        <h1>Mapa de Carreira</h1>
-        <div className="phase-grid">
-          {PHASES.map(({ key, label, img, alt }) => {
-            const unlocked = unlockedPhases.includes(key);
-            return (
-              <button
-                key={key}
-                className="phase-button"
-                onClick={() => unlocked && navigate(`/play/${key}`)}
-                aria-label={label}
-                disabled={!unlocked}
-              >
-                <img src={img} alt={alt || label} />
-                <span>{label}</span>
-              </button>
-            );
-          })}
+      <div className="career-map-screen">
+        <div className="page-content">
+          <h1>Mapa de Carreira</h1>
+          <div className="phase-grid">
+            {PHASES.map(({ key, label, img, alt }) => {
+              const unlocked = unlockedPhases.includes(key);
+              return (
+                <button
+                  key={key}
+                  className="phase-button"
+                  onClick={() => unlocked && navigate(`/play/${key}`)}
+                  aria-label={label}
+                  disabled={!unlocked}
+                >
+                  <img src={img} alt={alt || label} />
+                  <span>{label}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
     </FadeIn>
