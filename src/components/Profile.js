@@ -58,7 +58,10 @@ export default function Profile() {
         <strong>Alérgenos selecionados:</strong>{' '}
         {selected.length > 0 ? selected.join(', ') : 'Nenhum'}
       </p>
-      <button onClick={() => navigate('/modes')}>Selecionar Fase</button>
+      <div style={{ display: 'flex', gap: '1rem' }}>
+        <button onClick={() => navigate('/modes')}>Selecionar Fase</button>
+        <button onClick={() => navigate('/profile/edit')}>Editar perfil</button>
+      </div>
     </div>
   );
 }

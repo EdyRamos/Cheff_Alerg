@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Register from './components/Register';
 import Profile from './components/Profile';
+import EditProfile from './components/EditProfile';
 import ModeSelect from './components/ModeSelect';
 import Tutorial from './components/Tutorial';
 import MemoryGame from './components/MemoryGame';
@@ -24,6 +25,7 @@ export default function App() {
       <Route path="/startup" element={<StartupRedirect />} />
       <Route path="/register" element={<Register />} />
       <Route path="/profile" element={<Profile />} />
+      <Route path="/profile/edit" element={<EditProfile />} />
       <Route path="/modes" element={<ModeSelect />} />
       <Route path="/tutorial" element={<Tutorial />} />
       <Route path="/play/:phase" element={<MemoryGame />} />
