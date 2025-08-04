@@ -19,6 +19,8 @@ body {
   gap: 1rem;
   padding: 0;
   margin: 0;
+  justify-content: center;
+  align-items: center;
 }
 
 .phase-button {
@@ -31,20 +33,27 @@ body {
   padding: 0.5rem;
   border-radius: 8px;
   cursor: pointer;
-  transition: transform 0.2s, border-color 0.2s;
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .phase-button:hover,
 .phase-button:focus {
   border-color: #007bff;
-  transform: scale(1.05);
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
   outline: none;
+}
+
+.phase-button:active {
+  transform: translateY(-2px) scale(1.03);
 }
 
 .phase-button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   border-color: #ccc;
+  box-shadow: none;
+  transform: none;
 }
 
 .phase-button img {
@@ -52,6 +61,11 @@ body {
   height: 80px;
   object-fit: contain;
   margin-bottom: 0.5rem;
+  transition: transform 0.3s ease;
+}
+
+.phase-button:hover img {
+  transform: rotate(5deg) scale(1.1);
 }
 /* Transition screen overlay */
 .transition-screen {
