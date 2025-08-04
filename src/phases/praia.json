@@ -7,28 +7,43 @@
   "duration": 90,
   "items": [
     {
-      "allergens": [
-        "shellfish"
-      ],
+      "allergens": ["shellfish"],
       "key": "shrimp",
       "spriteUrl": "/assets/images/items/shrimp.png",
       "bitmaskBit": 6
     },
     {
-      "allergens": [],
-      "key": "coconut",
-      "spriteUrl": "/assets/images/items/coconut.png",
-      "bitmaskBit": 0
+      "allergens": ["fish"],
+      "key": "fish",
+      "spriteUrl": "/assets/images/items/fish.png",
+      "bitmaskBit": 5
     },
     {
-      "allergens": [
-        "gluten",
-        "egg",
-        "milk"
-      ],
+      "allergens": ["shellfish"],
+      "key": "squid",
+      "spriteUrl": "/assets/images/items/squid.png",
+      "bitmaskBit": 6,
+      "trap": true,
+      "penalty": 5
+    },
+    {
+      "allergens": ["coconut"],
+      "key": "coconut",
+      "spriteUrl": "/assets/images/items/coconut.png",
+      "bitmaskBit": 9
+    },
+    {
+      "allergens": ["gluten", "egg", "milk"],
       "key": "cake",
       "spriteUrl": "/assets/images/items/cake.png",
       "bitmaskBit": 1
+    },
+    {
+      "allergens": ["pineapple"],
+      "key": "pineapple",
+      "spriteUrl": "/assets/images/items/pineapple.png",
+      "bitmaskBit": 10,
+      "bonus": 15
     }
   ],
   "tips": [

@@ -173,15 +173,22 @@ export default class PhaserGameEngine {
       handleItemClick(sprite) {
         const item = sprite.getData('itemData');
         const bit = item.bitmaskBit;
-        const isAllergen = (bitmask & (1 << bit)) !== 0;
+        const isAllergen =
+          typeof bit === 'number' && (bitmask & (1 << bit)) !== 0;
         if (isAllergen) {
           this.lives -= 1;
           this.sound.play('allergenSound');
           this.updateLives();
           this.showTip();
           this.animateChef('miss');
+        } else if (item.trap) {
+          this.score = Math.max(0, this.score - (item.penalty || 10));
+          this.sound.play('allergenSound');
+          this.updateScore();
+          this.animateChef('miss');
         } else {
-          this.score += 10;
+          const bonus = item.bonus || 0;
+          this.score += 10 + bonus;
           this.sound.play('safeSound');
           this.updateScore();
           this.animateChef('collect');
