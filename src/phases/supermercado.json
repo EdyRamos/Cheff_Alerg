@@ -2,6 +2,7 @@
   "background": "/assets/images/bg/supermercado.png",
   "spawnRate": 1400,
   "simultaneous": 3,
+  "itemScale": 0.09,
   "items": [
     {
       "key": "cookie",

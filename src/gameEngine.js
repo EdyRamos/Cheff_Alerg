@@ -185,8 +185,11 @@ export default class PhaserGameEngine {
       spawnItem() {
         const { width } = this.scale;
         const item = Phaser.Utils.Array.GetRandom(phaseConfig.items);
-        const x = Phaser.Math.Between(32, width - 32);
-        const sprite = this.physics.add.image(x, -32, item.key);
+        const sizeRatio = phaseConfig.itemScale || 0.1;
+        const itemSize = phaseConfig.itemSize || width * sizeRatio;
+        const x = Phaser.Math.Between(itemSize / 2, width - itemSize / 2);
+        const sprite = this.physics.add.image(x, -itemSize / 2, item.key);
+        sprite.setDisplaySize(itemSize, itemSize);
         sprite.setData('itemData', item);
         sprite.setVelocityY(100 * this.speed);
         sprite.setInteractive();

@@ -2,6 +2,7 @@
   "background": "/assets/images/bg/feira_day.png",
   "spawnRate": 1500,
   "simultaneous": 2,
+  "itemScale": 0.09,
   "items": [
     {
       "key": "apple",

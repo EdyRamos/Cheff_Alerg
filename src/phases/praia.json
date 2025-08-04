@@ -5,6 +5,7 @@
   "speed": 1.2,
   "itemSpawnRate": 800,
   "duration": 90,
+  "itemScale": 0.08,
   "items": [
     {
       "allergens": ["shellfish"],
