@@ -61,10 +61,10 @@ export default function RegisterForm() {
   };
 
   return (
-    <div style={{ padding: '2rem' }}>
+    <div className="page-container">
       <h1>Cadastro</h1>
       <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '1rem' }}>
+        <div className="form-group">
           <label>
             Nome:
             <input
@@ -75,7 +75,7 @@ export default function RegisterForm() {
             />
           </label>
         </div>
-        <div style={{ marginBottom: '1rem' }}>
+        <div className="form-group">
           <label>
             Idade:
             <input
@@ -87,9 +87,9 @@ export default function RegisterForm() {
             />
           </label>
         </div>
-        <div style={{ marginBottom: '1rem' }}>
+        <div className="form-group">
           <strong>Selecione seus alérgenos:</strong>
-          <ul style={{ listStyle: 'none', padding: 0 }}>
+          <ul className="list-unstyled">
             {ALLERGEN_NAMES.map((name, idx) => (
               <li key={idx}>
                 <label>
@@ -104,7 +104,7 @@ export default function RegisterForm() {
             ))}
           </ul>
         </div>
-        <div style={{ marginBottom: '1rem' }}>
+        <div className="form-group">
           <label>
             <input
               type="checkbox"

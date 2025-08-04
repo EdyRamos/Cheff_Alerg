@@ -31,7 +31,7 @@ export default function App() {
       <Route path="/tutorial" element={<Tutorial />} />
       <Route path="/play/:phase" element={<MemoryGame />} />
       <Route path="/transition/:phase" element={<PhaseTransition />} />
-      <Route path="*" element={<div style={{ padding: '1rem' }}>Page not found</div>} />
+      <Route path="*" element={<div className="not-found">Page not found</div>} />
     </Routes>
   );
 }

@@ -28,10 +28,10 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border: 2px solid #ccc;
+  border: 0.125rem solid #ccc;
   background-color: #fff;
   padding: 0.5rem;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   cursor: pointer;
   transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
@@ -57,8 +57,8 @@ body {
 }
 
 .phase-button img {
-  width: 80px;
-  height: 80px;
+  width: 5rem;
+  height: 5rem;
   object-fit: contain;
   margin-bottom: 0.5rem;
   transition: transform 0.3s ease;
@@ -66,6 +66,94 @@ body {
 
 .phase-button:hover img {
   transform: rotate(5deg) scale(1.1);
+}
+
+.page-container {
+  padding: 2rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.list-unstyled {
+  list-style: none;
+  padding: 0;
+}
+
+.inline-icon {
+  height: 1.2em;
+  vertical-align: middle;
+  margin: 0 0.25em;
+}
+
+.game-container {
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+.flex-gap {
+  display: flex;
+  gap: 1rem;
+}
+
+.phase-transition {
+  text-align: center;
+}
+
+.transition-image {
+  max-width: 80%;
+  margin-bottom: 1rem;
+}
+
+.career-map-screen {
+  background-image: url('./assets/images/ui/mode_select_bg.jpg');
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.intro-screen {
+  background-image: url('./assets/images/ui/intro_bg.jpg');
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+}
+
+.not-found {
+  padding: 1rem;
+}
+
+@media (max-width: 600px) {
+  body {
+    font-size: 0.875rem;
+  }
+
+  .page-container {
+    padding: 1rem;
+  }
+
+  .form-group {
+    margin-bottom: 0.5rem;
+  }
+
+  input,
+  button {
+    width: 100%;
+  }
+
+  .phase-button img {
+    width: 15vw;
+    height: 15vw;
+  }
 }
 /* Transition screen overlay */
 .transition-screen {

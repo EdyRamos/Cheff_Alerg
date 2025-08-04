@@ -6,8 +6,6 @@ import LoadingScreen from './LoadingScreen';
 import { ALLERGEN_NAMES } from '../constants/allergens';
 import NavBar from './NavBar';
 
-// Lookup table for allergen names corresponding to each bit.
-
 /**
  * Displays the saved user profile along with a list of allergens to avoid.
  */
