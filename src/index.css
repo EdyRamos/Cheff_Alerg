@@ -41,6 +41,12 @@ body {
   outline: none;
 }
 
+.phase-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-color: #ccc;
+}
+
 .phase-button img {
   width: 80px;
   height: 80px;

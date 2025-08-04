@@ -6,6 +6,7 @@ import TransitionScreen from './TransitionScreen';
 import { useStore } from '../store';
 import { loadProfile } from '../services/firestore';
 import { loadNfcPreference } from '../utils/storage';
+import { PHASES } from './ModeSelect';
 
 /**
  * MemoryGame
@@ -20,11 +21,13 @@ export default function MemoryGame() {
   const [transitionMsg, setTransitionMsg] = useState('');
 
   // Zustand store
-  const profile         = useStore((s) => s.profile);
-  const setProfile      = useStore((s) => s.setProfile);
-  const setCurrentPhase = useStore((s) => s.setCurrentPhase);
+  const profile           = useStore((s) => s.profile);
+  const setProfile        = useStore((s) => s.setProfile);
+  const setCurrentPhase   = useStore((s) => s.setCurrentPhase);
   const cachedPhaseConfig = useStore((s) => s.phases[phase]);
-  const setPhaseConfig  = useStore((s) => s.setPhaseConfig);
+  const setPhaseConfig    = useStore((s) => s.setPhaseConfig);
+  const unlockPhase       = useStore((s) => s.unlockPhase);
+  const unlockedPhases    = useStore((s) => s.unlockedPhases);
 
   // Carrega a configuração da fase, cacheando no Zustand
   useEffect(() => {
@@ -78,7 +81,14 @@ export default function MemoryGame() {
   };
 
   const handleReturnToMenu = () => navigateWithTransition('Voltando ao menu...');
-  const handleGameOver = () => navigateWithTransition('Fim de jogo!');
+  const handleGameOver = () => {
+    const idx = PHASES.findIndex((p) => p.key === phase);
+    const next = PHASES[idx + 1];
+    if (next && !unlockedPhases.includes(next.key)) {
+      unlockPhase(next.key);
+    }
+    navigateWithTransition('Fim de jogo!');
+  };
 
   if (!phaseConfig || !profile) return <LoadingScreen />;
 

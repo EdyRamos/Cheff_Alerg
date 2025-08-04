@@ -33,4 +33,18 @@ export const useStore = create((set) => ({
   phases: {},
   setPhaseConfig: (id, config) =>
     set((state) => ({ phases: { ...state.phases, [id]: config } })),
+
+  /**
+   * Tracks which phases have been unlocked by the player. The first
+   * phase is unlocked by default so the game is playable on first
+   * launch. Additional phases are added to this array as the player
+   * progresses.
+   */
+  unlockedPhases: ['feira'],
+  unlockPhase: (id) =>
+    set((state) => ({
+      unlockedPhases: state.unlockedPhases.includes(id)
+        ? state.unlockedPhases
+        : [...state.unlockedPhases, id],
+    })),
 }));
