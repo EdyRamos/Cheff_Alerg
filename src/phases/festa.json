@@ -1,7 +1,12 @@
 {
   "transition": {
     "text": "Festa de Aniversário chegando!",
-    "image": "/assets/images/bg/festa.png"
+    "image": "/assets/images/bg/festa.png",
+    "animation": "fade",
+    "audio": "/assets/audio/safe.ogg",
+    "duration": 3000,
+    "skipAfter": 2000,
+    "tip": "Dica: cuidado com ingredientes escondidos nos doces!"
   },
   "background": "/assets/images/bg/festa.png",
   "music": "/assets/audio/background.ogg",
