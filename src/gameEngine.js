@@ -16,10 +16,12 @@ export default class PhaserGameEngine {
     if (this.game) return;
     const { phaseConfig, bitmask, onGameOver, onReturnToMenu } = this;
 
+    const { width, height } = parent.getBoundingClientRect();
+
     this.game = new Phaser.Game({
       type: Phaser.AUTO,
-      width: window.innerWidth,
-      height: window.innerHeight,
+      width,
+      height,
       parent,
       scene: [
         new GameScene({ phaseConfig, bitmask, onGameOver, engine: this }),
@@ -36,7 +38,8 @@ export default class PhaserGameEngine {
     });
 
     this.resizeHandler = () => {
-      this.game.scale.resize(window.innerWidth, window.innerHeight);
+      const { width: newWidth, height: newHeight } = parent.getBoundingClientRect();
+      this.game.scale.resize(newWidth, newHeight);
     };
     window.addEventListener('resize', this.resizeHandler);
   }
