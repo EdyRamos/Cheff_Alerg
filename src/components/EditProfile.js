@@ -5,6 +5,7 @@ import { saveNfcPreference } from '../utils/storage';
 import { arrayToBitmask, bitmaskToArray } from '../utils/bitmask';
 import { useStore } from '../store';
 import { ALLERGEN_NAMES } from '../constants/allergens';
+import PageLayout from './PageLayout';
 
 // Lista de alérgenos importada de src/constants/allergens.js. A ordem deve ser mantida.
 
@@ -63,7 +64,7 @@ export default function EditProfile() {
   };
 
   return (
-    <div className="page-container">
+    <PageLayout>
       <h1>Editar Perfil</h1>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
@@ -120,7 +121,6 @@ export default function EditProfile() {
           {saving ? 'Salvando…' : 'Salvar Perfil'}
         </button>
       </form>
-    </div>
+    </PageLayout>
   );
 }
-

@@ -5,6 +5,7 @@ import { useStore } from '../store';
 import LoadingScreen from './LoadingScreen';
 import { ALLERGEN_NAMES } from '../constants/allergens';
 import NavBar from './NavBar';
+import PageLayout from './PageLayout';
 
 /**
  * Displays the saved user profile along with a list of allergens to avoid.
@@ -34,7 +35,7 @@ export default function Profile() {
   return (
     <>
       <NavBar />
-      <div style={{ padding: '2rem' }}>
+      <PageLayout>
         <h1>Seu Perfil</h1>
         <p>
           <strong>Nome:</strong> {profile.nome}
@@ -50,7 +51,7 @@ export default function Profile() {
           <button onClick={() => navigate('/modes')}>Selecionar Fase</button>
           <button onClick={() => navigate('/profile/edit')}>Editar perfil</button>
         </div>
-      </div>
+      </PageLayout>
     </>
   );
 }
