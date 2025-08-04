@@ -1,16 +1,15 @@
 {
+  "background": "/assets/images/bg/feira_day.png",
   "spawnRate": 1500,
   "simultaneous": 2,
   "items": [
     {
       "key": "apple",
-      "spriteUrl": "/assets/images/items/apple.png",
-      "bitmaskBit": 0
+      "spriteUrl": "/assets/images/items/apple.png"
     },
     {
       "key": "banana",
       "spriteUrl": "/assets/images/items/banana.png",
-      "bitmaskBit": 0,
       "trap": true,
       "penalty": 5
     },
@@ -23,6 +22,16 @@
       "key": "hazelnut",
       "spriteUrl": "/assets/images/items/hazelnut.png",
       "bitmaskBit": 7
+    },
+    {
+      "key": "soybean",
+      "spriteUrl": "/assets/images/items/soybean.png",
+      "bitmaskBit": 3
+    },
+    {
+      "key": "strawberry",
+      "spriteUrl": "/assets/images/items/strawberry.png",
+      "bitmaskBit": 11
     }
   ]
 }

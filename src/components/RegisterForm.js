@@ -15,6 +15,9 @@ const ALLERGEN_NAMES = [
   'Frutos do Mar',
   'Castanhas',
   'Milho',
+  'Coco',
+  'Abacaxi',
+  'Morango',
 ];
 
 // Gera um UID simples combinando timestamp e número aleatório.

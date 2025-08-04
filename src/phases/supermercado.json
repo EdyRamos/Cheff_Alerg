@@ -1,4 +1,5 @@
 {
+  "background": "/assets/images/bg/supermercado.png",
   "spawnRate": 1400,
   "simultaneous": 3,
   "items": [
@@ -16,12 +17,29 @@
       "key": "bread",
       "spriteUrl": "/assets/images/items/bread.png",
       "bitmaskBit": 4,
-      "trap": true
+      "trap": true,
+      "penalty": 10
     },
     {
       "key": "cereal",
       "spriteUrl": "/assets/images/items/cereal.png",
-      "bitmaskBit": 4
+      "bitmaskBit": 8
+    },
+    {
+      "key": "cheese",
+      "spriteUrl": "/assets/images/items/cheese.png",
+      "bitmaskBit": 0
+    },
+    {
+      "key": "egg",
+      "spriteUrl": "/assets/images/items/egg.png",
+      "bitmaskBit": 1
+    },
+    {
+      "key": "pineapple",
+      "spriteUrl": "/assets/images/items/pineapple.png",
+      "bitmaskBit": 10,
+      "bonus": 15
     }
   ]
 }
