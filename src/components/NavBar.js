@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import './NavBar.css';
 
 /**
  * Accessible navigation menu present on main screens.
@@ -7,15 +8,7 @@ import { Link } from 'react-router-dom';
 export default function NavBar() {
   return (
     <nav aria-label="Navegação principal">
-      <ul
-        style={{
-          display: 'flex',
-          gap: '1rem',
-          listStyle: 'none',
-          padding: 0,
-          margin: 0
-        }}
-      >
+      <ul className="navbar">
         <li>
           <Link to="/profile">Perfil</Link>
         </li>
