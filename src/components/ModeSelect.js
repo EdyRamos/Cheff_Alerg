@@ -2,10 +2,11 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // Thumbnails for each phase
-import feiraImg from '../assets/images/items/apple.png';
-import supermercadoImg from '../assets/images/items/bread.png';
-import festaImg from '../assets/images/items/cake.png';
-import praiaImg from '../assets/images/items/coconut.png';
+// Assets are served from the public folder using absolute paths
+const feiraImg = '/assets/images/items/apple.png';
+const supermercadoImg = '/assets/images/items/bread.png';
+const festaImg = '/assets/images/items/cake.png';
+const praiaImg = '/assets/images/items/coconut.png';
 
 // List of available phases.  The key matches the JSON file name in
 // `src/phases/` and the label is shown to the player.

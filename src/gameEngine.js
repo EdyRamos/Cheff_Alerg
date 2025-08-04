@@ -1,6 +1,10 @@
 import Phaser from 'phaser';
 import DifficultyManager from './utils/DifficultyManager';
 
+// Base paths for static assets served from the public folder
+const AUDIO_BASE = '/assets/audio';
+const IMAGE_BASE = '/assets/images';
+
 export default class PhaserGameEngine {
   constructor({ phaseConfig, bitmask, onGameOver, onReturnToMenu }) {
     this.phaseConfig = phaseConfig;
@@ -36,14 +40,14 @@ export default class PhaserGameEngine {
         phaseConfig.items.forEach((item) => {
           this.load.image(item.key, item.spriteUrl);
         });
-        this.load.image('missing', '/assets/images/missing.png');
+        this.load.image('missing', `${IMAGE_BASE}/missing.png`);
         if (phaseConfig.background) {
           this.load.image('background', phaseConfig.background);
         }
-        const music = phaseConfig.music || '/assets/audio/background.ogg';
+        const music = phaseConfig.music || `${AUDIO_BASE}/background.ogg`;
         this.load.audio('bgMusic', music);
-        this.load.audio('safeSound', '/assets/audio/safe.ogg');
-        this.load.audio('allergenSound', '/assets/audio/allergen.ogg');
+        this.load.audio('safeSound', `${AUDIO_BASE}/safe.ogg`);
+        this.load.audio('allergenSound', `${AUDIO_BASE}/allergen.ogg`);
       }
       create() {
         const { width, height } = this.scale;
