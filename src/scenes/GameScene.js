@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import DifficultyManager from '../utils/DifficultyManager';
+import { getHUDConfig } from '../utils/hudConfig';
 
 import pauseIcon from '../assets/images/ui/pause.png';
 import lifeFullIcon from '../assets/images/ui/life_full.png';
@@ -63,6 +64,9 @@ export default class GameScene extends Phaser.Scene {
     const { phaseConfig } = this;
     const engine = this.engine;
     const chefSize = width * 0.15;
+    const hud = getHUDConfig(width, height);
+    const { margin, iconSize, textStyle } = hud;
+    this.hudContainer = this.add.container(0, 0).setDepth(10);
     if (phaseConfig.background) {
       const bg = this.add.image(width / 2, height / 2, 'background');
       const scaleX = width / bg.width;
@@ -76,76 +80,79 @@ export default class GameScene extends Phaser.Scene {
       engine.bgMusic = this.bgMusic;
     }
     // Score HUD
+    this.scoreContainer = this.add.container(margin, margin);
     this.scoreIcon = this.add
-      .image(16, 24, 'uiScore')
+      .image(0, 0, 'uiScore')
       .setOrigin(0, 0.5)
-      .setDisplaySize(32, 32);
-    this.scoreText = this.add.text(
-      this.scoreIcon.x + this.scoreIcon.width + 8,
-      16,
-      `${this.score}`,
-      {
-        fontSize: '24px',
-        fill: '#fff',
-      }
-    );
+      .setDisplaySize(iconSize, iconSize);
+    this.scoreText = this.add
+      .text(iconSize + margin / 2, 0, `${this.score}`, textStyle)
+      .setOrigin(0, 0.5);
+    this.scoreContainer.add([this.scoreIcon, this.scoreText]);
+    this.hudContainer.add(this.scoreContainer);
+
     // Life HUD
-    for (let i = 0; i < 3; i++) {
+    this.livesContainer = this.add.container(width - margin, margin);
+    for (let i = 0; i < this.lives; i++) {
       const icon = this.add
-        .image(width - 16 - i * 32, 24, 'uiLifeFull')
+        .image(-i * (iconSize + margin / 2), 0, 'uiLifeFull')
         .setOrigin(1, 0.5)
-        .setDisplaySize(32, 32);
+        .setDisplaySize(iconSize, iconSize);
       this.lifeIcons.push(icon);
+      this.livesContainer.add(icon);
     }
+    this.hudContainer.add(this.livesContainer);
+
     // Timer HUD
     if (this.duration) {
       this.remainingTime = this.duration;
+      this.timeContainer = this.add.container(width / 2, margin);
       this.timeIcon = this.add
-        .image(width / 2 - 40, 24, 'uiTime')
+        .image(-iconSize - margin / 2, 0, 'uiTime')
         .setOrigin(0, 0.5)
-        .setDisplaySize(32, 32);
-      this.timeText = this.add.text(
-        this.timeIcon.x + this.timeIcon.width + 8,
-        16,
-        `${this.remainingTime}`,
-        { fontSize: '24px', fill: '#fff' }
-      );
+        .setDisplaySize(iconSize, iconSize);
+      this.timeText = this.add
+        .text(0, 0, `${this.remainingTime}`, textStyle)
+        .setOrigin(0, 0.5);
+      this.timeContainer.add([this.timeIcon, this.timeText]);
+      this.hudContainer.add(this.timeContainer);
       this.timeEvent = this.time.addEvent({
         delay: 1000,
         callback: () => {
           this.remainingTime -= 1;
           this.timeText.setText(`${this.remainingTime}`);
+          this.animateHUD(this.timeContainer);
         },
         loop: true,
       });
     }
     // Tips
     this.tipCard = this.add
-      .image(width / 2, height - 80, 'uiTipBg')
+      .image(width / 2, hud.tip.y, 'uiTipBg')
       .setOrigin(0.5)
       .setDepth(9)
       .setVisible(false)
-      .setDisplaySize(300, 100);
+      .setDisplaySize(hud.tip.cardWidth, hud.tip.cardHeight);
     this.tipText = this.add
-      .text(width / 2, height - 80, '', {
-        fontSize: '20px',
+      .text(width / 2, hud.tip.y, '', {
+        fontSize: `${iconSize * 0.6}px`,
         fill: '#000',
         align: 'center',
-        wordWrap: { width: 260 },
+        wordWrap: { width: hud.tip.cardWidth - margin * 2 },
       })
       .setOrigin(0.5)
       .setDepth(10)
       .setVisible(false);
     // Chef sprite (ANIMAÇÃO)
     this.chef = this.add
-      .sprite(width / 2, height - 100, 'chefIdle')
+      .sprite(width / 2, height - chefSize / 2 - margin * 2, 'chefIdle')
       .setDepth(5)
       .setDisplaySize(chefSize, chefSize);
     this.tipTimer = null;
     // Pause
     const pauseButton = this.add
-      .image(width - 40, 40, 'uiPause')
-      .setDisplaySize(32, 32)
+      .image(width - margin * 2, margin * 2, 'uiPause')
+      .setDisplaySize(iconSize, iconSize)
       .setInteractive();
     const launchPause = () => {
       this.bgMusic?.pause();
@@ -243,6 +250,7 @@ export default class GameScene extends Phaser.Scene {
 
   updateScore() {
     this.scoreText.setText(`${this.score}`);
+    this.animateHUD(this.scoreContainer);
   }
 
   updateLives() {
@@ -250,6 +258,7 @@ export default class GameScene extends Phaser.Scene {
       const key = index < this.lives ? 'uiLifeFull' : 'uiLifeEmpty';
       icon.setTexture(key);
     });
+    this.animateHUD(this.livesContainer);
   }
 
   showTip() {
@@ -286,6 +295,15 @@ export default class GameScene extends Phaser.Scene {
         sprite.destroy();
         this.activeItems = this.activeItems.filter((i) => i !== sprite);
       }
+    });
+  }
+
+  animateHUD(target) {
+    this.tweens.add({
+      targets: target,
+      scale: { from: 1, to: 1.2 },
+      duration: 200,
+      yoyo: true,
     });
   }
 }
