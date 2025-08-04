@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import FadeIn from './FadeIn';
 
 // Thumbnails for each phase
 // Assets are served from the public folder using absolute paths
@@ -21,21 +22,31 @@ export default function ModeSelect() {
   const navigate = useNavigate();
 
   return (
-    <div style={{ padding: '2rem' }}>
-      <h1>Escolha uma Fase</h1>
-      <div className="phase-grid">
-        {PHASES.map(({ key, label, img, alt }) => (
-          <button
-            key={key}
-            className="phase-button"
-            onClick={() => navigate(`/play/${key}`)}
-            aria-label={label}
-          >
-            <img src={img} alt={alt || label} />
-            <span>{label}</span>
-          </button>
-        ))}
+    <FadeIn>
+      <div
+        style={{
+          backgroundImage: 'url(/assets/images/ui/mode_select_bg.jpg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          minHeight: '100vh',
+          padding: '2rem'
+        }}
+      >
+        <h1>Escolha uma Fase</h1>
+        <div className="phase-grid">
+          {PHASES.map(({ key, label, img, alt }) => (
+            <button
+              key={key}
+              className="phase-button"
+              onClick={() => navigate(`/play/${key}`)}
+              aria-label={label}
+            >
+              <img src={img} alt={alt || label} />
+              <span>{label}</span>
+            </button>
+          ))}
+        </div>
       </div>
-    </div>
+    </FadeIn>
   );
 }
