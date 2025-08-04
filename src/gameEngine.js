@@ -1,6 +1,13 @@
 import Phaser from 'phaser';
 import DifficultyManager from './utils/DifficultyManager';
 
+import pauseIcon from './assets/images/ui/pause.png';
+import lifeFullIcon from './assets/images/ui/life_full.png';
+import lifeEmptyIcon from './assets/images/ui/life_empty.png';
+import scoreIcon from './assets/images/ui/score.png';
+import timeIcon from './assets/images/ui/time.png';
+import tipBgIcon from './assets/images/ui/card_tip_bg.png';
+
 export default class PhaserGameEngine {
   constructor({ phaseConfig, bitmask, onGameOver, onReturnToMenu }) {
     this.phaseConfig = phaseConfig;
@@ -31,6 +38,8 @@ export default class PhaserGameEngine {
         this.duration = phaseConfig.duration || null;
         this.tips = phaseConfig.tips || [];
         this.tipText = null;
+        this.tipCard = null;
+        this.lifeIcons = [];
       }
       preload() {
         phaseConfig.items.forEach((item) => {
@@ -44,6 +53,12 @@ export default class PhaserGameEngine {
         this.load.audio('bgMusic', music);
         this.load.audio('safeSound', '/assets/audio/safe.ogg');
         this.load.audio('allergenSound', '/assets/audio/allergen.ogg');
+        this.load.image('uiPause', pauseIcon);
+        this.load.image('uiLifeFull', lifeFullIcon);
+        this.load.image('uiLifeEmpty', lifeEmptyIcon);
+        this.load.image('uiScore', scoreIcon);
+        this.load.image('uiTime', timeIcon);
+        this.load.image('uiTipBg', tipBgIcon);
       }
       create() {
         const { width, height } = this.scale;
@@ -56,55 +71,67 @@ export default class PhaserGameEngine {
         this.bgMusic = this.sound.add('bgMusic', { loop: true });
         this.bgMusic.play();
         engine.bgMusic = this.bgMusic;
+        this.scoreIcon = this.add
+          .image(16, 24, 'uiScore')
+          .setOrigin(0, 0.5)
+          .setDisplaySize(32, 32);
         this.scoreText = this.add.text(
+          this.scoreIcon.x + this.scoreIcon.width + 8,
           16,
-          16,
-          `Pontuação: ${this.score}`,
+          `${this.score}`,
           {
             fontSize: '24px',
             fill: '#fff',
           }
         );
-        this.scoreBg = this.add
-          .rectangle(
-            this.scoreText.x - 8,
-            this.scoreText.y - 8,
-            this.scoreText.width + 16,
-            this.scoreText.height + 16,
-            0x000000,
-            0.5
-          )
-          .setOrigin(0, 0)
-          .setDepth(this.scoreText.depth - 1);
-        this.lifeText = this.add.text(0, 16, `Vidas: ${this.lives}`, {
-          fontSize: '24px',
-          fill: '#fff',
-        });
-        this.lifeText.setX(width - this.lifeText.width - 16);
-        this.lifeBg = this.add
-          .rectangle(
-            this.lifeText.x - 8,
-            this.lifeText.y - 8,
-            this.lifeText.width + 16,
-            this.lifeText.height + 16,
-            0x000000,
-            0.5
-          )
-          .setOrigin(0, 0)
-          .setDepth(this.lifeText.depth - 1);
-        this.tipText = this.add
-          .text(width / 2, height - 40, '', {
-            fontSize: '20px',
-            fill: '#fff',
-          })
+        for (let i = 0; i < 3; i++) {
+          const icon = this.add
+            .image(width - 16 - i * 32, 24, 'uiLifeFull')
+            .setOrigin(1, 0.5)
+            .setDisplaySize(32, 32);
+          this.lifeIcons.push(icon);
+        }
+        if (this.duration) {
+          this.remainingTime = this.duration;
+          this.timeIcon = this.add
+            .image(width / 2 - 40, 24, 'uiTime')
+            .setOrigin(0, 0.5)
+            .setDisplaySize(32, 32);
+          this.timeText = this.add.text(
+            this.timeIcon.x + this.timeIcon.width + 8,
+            16,
+            `${this.remainingTime}`,
+            { fontSize: '24px', fill: '#fff' }
+          );
+          this.timeEvent = this.time.addEvent({
+            delay: 1000,
+            callback: () => {
+              this.remainingTime -= 1;
+              this.timeText.setText(`${this.remainingTime}`);
+            },
+            loop: true,
+          });
+        }
+        this.tipCard = this.add
+          .image(width / 2, height - 80, 'uiTipBg')
           .setOrigin(0.5)
-          .setDepth(10);
-        this.tipTimer = null;
-        const pauseButton = this.add
-          .text(width - 80, 50, 'Pausar', {
+          .setDepth(9)
+          .setVisible(false)
+          .setDisplaySize(300, 100);
+        this.tipText = this.add
+          .text(width / 2, height - 80, '', {
             fontSize: '20px',
             fill: '#000',
+            align: 'center',
+            wordWrap: { width: 260 },
           })
+          .setOrigin(0.5)
+          .setDepth(10)
+          .setVisible(false);
+        this.tipTimer = null;
+        const pauseButton = this.add
+          .image(width - 40, 40, 'uiPause')
+          .setDisplaySize(32, 32)
           .setInteractive();
         const launchPause = () => {
           this.bgMusic?.pause();
@@ -170,20 +197,25 @@ export default class PhaserGameEngine {
         }
       }
       updateScore() {
-        this.scoreText.setText(`Pontuação: ${this.score}`);
+        this.scoreText.setText(`${this.score}`);
       }
       updateLives() {
-        this.lifeText.setText(`Vidas: ${this.lives}`);
+        this.lifeIcons.forEach((icon, index) => {
+          const key = index < this.lives ? 'uiLifeFull' : 'uiLifeEmpty';
+          icon.setTexture(key);
+        });
       }
       showTip() {
         if (this.tips.length === 0) return;
         const tip = Phaser.Utils.Array.GetRandom(this.tips);
-        this.tipText.setText(tip);
+        this.tipCard.setVisible(true);
+        this.tipText.setText(tip).setVisible(true);
         if (this.tipTimer) this.tipTimer.remove(false);
         this.tipTimer = this.time.addEvent({
           delay: 5000,
           callback: () => {
-            this.tipText.setText('');
+            this.tipText.setText('').setVisible(false);
+            this.tipCard.setVisible(false);
             this.tipTimer = null;
           },
         });
