@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Register from './components/Register';
 import Profile from './components/Profile';
 import ModeSelect from './components/ModeSelect';
@@ -19,8 +19,9 @@ import StartupRedirect from './components/StartupRedirect';
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<StartupRedirect />} />
+      <Route path="/" element={<Navigate to="/intro" replace />} />
       <Route path="/intro" element={<Intro />} />
+      <Route path="/startup" element={<StartupRedirect />} />
       <Route path="/register" element={<Register />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/modes" element={<ModeSelect />} />

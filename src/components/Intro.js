@@ -7,6 +7,7 @@ import FadeIn from './FadeIn';
  */
 export default function Intro() {
   const navigate = useNavigate();
+  const handleStart = () => navigate('/startup');
   return (
     <FadeIn>
       <div
@@ -29,7 +30,8 @@ export default function Intro() {
           para proteger pessoas de ingredientes perigosos. Descubra o que é seguro
           em cada fase e ajude a todos a comer sem medo!
         </p>
-        <button onClick={() => navigate('/register')}>Iniciar Missão</button>
+        <button onClick={handleStart}>Iniciar Missão</button>
+        <button onClick={handleStart}>Pular</button>
       </div>
     </FadeIn>
   );
