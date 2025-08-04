@@ -69,6 +69,7 @@ export default class PhaserGameEngine {
       }
       create() {
         const { width, height } = this.scale;
+        const chefSize = width * 0.15;
         if (phaseConfig.background) {
           this.add
             .image(0, 0, 'background')
@@ -142,7 +143,8 @@ export default class PhaserGameEngine {
         // Chef sprite (ANIMAÇÃO)
         this.chef = this.add
           .sprite(width / 2, height - 100, 'chefIdle')
-          .setDepth(5);
+          .setDepth(5)
+          .setDisplaySize(chefSize, chefSize);
         this.tipTimer = null;
         // Pause
         const pauseButton = this.add
