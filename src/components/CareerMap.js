@@ -31,7 +31,10 @@ export default function CareerMap() {
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           minHeight: '100vh',
-          padding: '2rem'
+          padding: '2rem',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center'
         }}
       >
         <h1>Mapa de Carreira</h1>
