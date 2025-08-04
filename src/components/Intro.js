@@ -9,31 +9,21 @@ import NavBar from './NavBar';
 export default function Intro() {
   const navigate = useNavigate();
   const handleStart = () => navigate('/startup');
+  const handleSkip = () => navigate('/modes');
   return (
     <FadeIn>
       <NavBar />
-      <div
-        style={{
-          backgroundImage: 'url(/assets/images/ui/intro_bg.jpg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          minHeight: '100vh',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          textAlign: 'center',
-          padding: '2rem'
-        }}
-      >
-        <h1>Chef Alerg</h1>
-        <p>
-          Você é o Chef Alerg, um detetive de alergias viajando pelo mundo
-          para proteger pessoas de ingredientes perigosos. Descubra o que é seguro
-          em cada fase e ajude a todos a comer sem medo!
-        </p>
-        <button onClick={handleStart}>Iniciar Missão</button>
-        <button onClick={handleStart}>Pular</button>
+      <div className="intro-screen">
+        <div className="intro-content">
+          <h1>Chef Alerg</h1>
+          <p>
+            Você é o Chef Alerg, um detetive de alergias viajando pelo mundo
+            para proteger pessoas de ingredientes perigosos. Descubra o que é seguro
+            em cada fase e ajude a todos a comer sem medo!
+          </p>
+          <button onClick={handleStart}>Iniciar Missão</button>
+          <button onClick={handleSkip}>Pular</button>
+        </div>
       </div>
     </FadeIn>
   );
