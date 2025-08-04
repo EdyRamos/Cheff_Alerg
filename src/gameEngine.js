@@ -70,10 +70,11 @@ export default class PhaserGameEngine {
       create() {
         const { width, height } = this.scale;
         if (phaseConfig.background) {
-          this.add
-            .image(0, 0, 'background')
-            .setOrigin(0)
-            .setDisplaySize(width, height);
+          const bg = this.add.image(width / 2, height / 2, 'background');
+          const scaleX = width / bg.width;
+          const scaleY = height / bg.height;
+          const scale = Math.max(scaleX, scaleY);
+          bg.setScale(scale).setScrollFactor(0);
         }
         this.bgMusic = this.sound.add('bgMusic', { loop: true });
         this.bgMusic.play();
