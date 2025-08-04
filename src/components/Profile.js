@@ -13,7 +13,10 @@ const ALLERGEN_NAMES = [
   'Peixes',
   'Frutos do Mar',
   'Castanhas',
-  'Milho'
+  'Milho',
+  'Coco',
+  'Abacaxi',
+  'Morango'
 ];
 
 /**

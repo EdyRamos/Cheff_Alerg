@@ -19,8 +19,18 @@
     },
     {
       "key": "candy",
-      "spriteUrl": "/assets/images/items/candy.png",
-      "bitmaskBit": 0
+      "spriteUrl": "/assets/images/items/candy.png"
+    },
+    {
+      "key": "coconut",
+      "spriteUrl": "/assets/images/items/coconut.png",
+      "bitmaskBit": 9
+    },
+    {
+      "key": "strawberry",
+      "spriteUrl": "/assets/images/items/strawberry.png",
+      "bitmaskBit": 11,
+      "bonus": 20
     }
   ]
 }
