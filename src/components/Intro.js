@@ -10,20 +10,7 @@ export default function Intro() {
   const handleStart = () => navigate('/startup');
   return (
     <FadeIn>
-      <div
-        style={{
-          backgroundImage: 'url(/assets/images/ui/intro_bg.jpg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          minHeight: '100vh',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          textAlign: 'center',
-          padding: '2rem'
-        }}
-      >
+      <div className="intro-screen">
         <h1>Chef Alerg</h1>
         <p>
           Você é o Chef Alerg, um detetive de alergias viajando pelo mundo

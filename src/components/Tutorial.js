@@ -16,7 +16,7 @@ import tipIcon from '../assets/images/ui/card_tip_bg.png';
 export default function Tutorial() {
   const navigate = useNavigate();
   return (
-    <div style={{ padding: '2rem' }}>
+    <div className="page-container">
       <h1>Tutorial</h1>
       <p>
         Bem‑vindo ao Chef Alerg! O objetivo é arrastar ou tocar os
@@ -32,13 +32,13 @@ export default function Tutorial() {
         <img
           src={lifeIcon}
           alt="Vidas"
-          style={{ height: '1.2em', verticalAlign: 'middle', margin: '0 0.25em' }}
+          className="inline-icon"
         />
         e receberá uma dica
         <img
           src={tipIcon}
           alt="Dica"
-          style={{ height: '1.2em', verticalAlign: 'middle', margin: '0 0.25em' }}
+          className="inline-icon"
         />
         sobre o ingrediente.
       </p>
@@ -47,19 +47,19 @@ export default function Tutorial() {
         <img
           src={pauseIcon}
           alt="Pausar"
-          style={{ height: '1.2em', verticalAlign: 'middle', margin: '0 0.25em' }}
+          className="inline-icon"
         />
         para pausar o jogo. Acompanhe sua pontuação
         <img
           src={scoreIcon}
           alt="Pontuação"
-          style={{ height: '1.2em', verticalAlign: 'middle', margin: '0 0.25em' }}
+          className="inline-icon"
         />
         e o tempo restante
         <img
           src={timeIcon}
           alt="Tempo"
-          style={{ height: '1.2em', verticalAlign: 'middle', margin: '0 0.25em' }}
+          className="inline-icon"
         />
         na parte superior da tela.
       </p>

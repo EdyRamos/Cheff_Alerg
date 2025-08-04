@@ -25,15 +25,7 @@ export default function CareerMap() {
 
   return (
     <FadeIn>
-      <div
-        style={{
-          backgroundImage: 'url(/assets/images/ui/mode_select_bg.jpg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          minHeight: '100vh',
-          padding: '2rem'
-        }}
-      >
+      <div className="career-map-screen">
         <h1>Mapa de Carreira</h1>
         <div className="phase-grid">
           {PHASES.map(({ key, label, img, alt }) => {

@@ -41,12 +41,12 @@ export default function PhaseTransition() {
 
   return (
     <TransitionScreen>
-      <div className="phase-transition" style={{ textAlign: 'center' }}>
+      <div className="phase-transition">
         {image && (
           <img
             src={image}
             alt=""
-            style={{ maxWidth: '80%', marginBottom: '1rem' }}
+            className="transition-image"
           />
         )}
         {text && <h2>{text}</h2>}

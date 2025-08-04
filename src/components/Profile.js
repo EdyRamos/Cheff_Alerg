@@ -33,7 +33,7 @@ export default function Profile() {
   const selected = ALLERGEN_NAMES.slice(0, bitCount).filter((_, idx) => (profile.bitmask & (1 << idx)) !== 0);
 
   return (
-    <div style={{ padding: '2rem' }}>
+    <div className="page-container">
       <h1>Seu Perfil</h1>
       <p>
         <strong>Nome:</strong> {profile.nome}
@@ -45,7 +45,7 @@ export default function Profile() {
         <strong>Alérgenos selecionados:</strong>{' '}
         {selected.length > 0 ? selected.join(', ') : 'Nenhum'}
       </p>
-      <div style={{ display: 'flex', gap: '1rem' }}>
+      <div className="flex-gap">
         <button onClick={() => navigate('/modes')}>Selecionar Fase</button>
         <button onClick={() => navigate('/profile/edit')}>Editar perfil</button>
       </div>
