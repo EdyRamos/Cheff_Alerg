@@ -3,22 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { saveProfile } from '../services/firestore';
 import { saveNfcPreference } from '../utils/storage';
 import { arrayToBitmask } from '../utils/bitmask';
+import { ALLERGEN_NAMES } from '../constants/allergens';
 
-// Lista de alérgenos. A ordem deve ser igual à de ALLERGEN_NAMES em Profile.js.
-const ALLERGEN_NAMES = [
-  'Leite',
-  'Ovo',
-  'Amendoim',
-  'Soja',
-  'Trigo',
-  'Peixes',
-  'Frutos do Mar',
-  'Castanhas',
-  'Milho',
-  'Coco',
-  'Abacaxi',
-  'Morango',
-];
+// Lista de alérgenos importada de src/constants/allergens.js. A ordem deve ser mantida.
 
 // Gera um UID simples combinando timestamp e número aleatório.
 const generateUid = () => {

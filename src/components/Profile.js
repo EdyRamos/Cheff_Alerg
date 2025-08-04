@@ -3,22 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { loadProfile } from '../services/firestore';
 import { useStore } from '../store';
 import LoadingScreen from './LoadingScreen';
+import { ALLERGEN_NAMES } from '../constants/allergens';
 
 // Lookup table for allergen names corresponding to each bit.
-const ALLERGEN_NAMES = [
-  'Leite',
-  'Ovo',
-  'Amendoim',
-  'Soja',
-  'Trigo',
-  'Peixes',
-  'Frutos do Mar',
-  'Castanhas',
-  'Milho',
-  'Coco',
-  'Abacaxi',
-  'Morango'
-];
 
 /**
  * Displays the saved user profile along with a list of allergens to avoid.
