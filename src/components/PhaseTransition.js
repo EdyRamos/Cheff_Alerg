@@ -76,7 +76,7 @@ export default function PhaseTransition() {
         {text && <h2>{text}</h2>}
         {tip && <p>{tip}</p>}
         {allowSkip && (
-          <button onClick={handleSkip} style={{ marginTop: '1rem' }}>
+          <button className="btn" onClick={handleSkip} style={{ marginTop: '1rem' }}>
             Pular
           </button>
         )}

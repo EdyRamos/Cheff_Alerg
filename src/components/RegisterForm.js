@@ -116,7 +116,7 @@ export default function RegisterForm() {
               Usar NFC para armazenar o perfil
             </label>
           </div>
-          <button type="submit" disabled={saving}>
+          <button className="btn" type="submit" disabled={saving}>
             {saving ? 'Salvando…' : 'Salvar Perfil'}
           </button>
         </form>

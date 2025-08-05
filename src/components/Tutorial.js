@@ -65,7 +65,7 @@ export default function Tutorial() {
           />
           na parte superior da tela.
         </p>
-        <button onClick={() => navigate('/modes')}>Voltar</button>
+        <button className="btn" onClick={() => navigate('/modes')}>Voltar</button>
       </div>
     </PageLayout>
   );

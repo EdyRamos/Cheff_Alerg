@@ -49,8 +49,8 @@ export default function Profile() {
             {selected.length > 0 ? selected.join(', ') : 'Nenhum'}
           </p>
           <div className="flex-gap">
-            <button onClick={() => navigate('/modes')}>Selecionar Fase</button>
-            <button onClick={() => navigate('/profile/edit')}>Editar perfil</button>
+            <button className="btn" onClick={() => navigate('/modes')}>Selecionar Fase</button>
+            <button className="btn" onClick={() => navigate('/profile/edit')}>Editar perfil</button>
           </div>
         </div>
       </PageLayout>

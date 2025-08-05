@@ -21,8 +21,8 @@ export default function Intro() {
             para proteger pessoas de ingredientes perigosos. Descubra o que é seguro
             em cada fase e ajude a todos a comer sem medo!
           </p>
-          <button onClick={handleStart}>Iniciar Missão</button>
-          <button onClick={handleSkip}>Pular</button>
+          <button className="btn" onClick={handleStart}>Iniciar Missão</button>
+          <button className="btn" onClick={handleSkip}>Pular</button>
         </div>
       </div>
     </FadeIn>
