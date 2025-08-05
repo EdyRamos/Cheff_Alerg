@@ -14,7 +14,7 @@ export default function Intro() {
     <FadeIn>
       <NavBar />
       <div className="intro-screen">
-        <div className="intro-content">
+        <div className="page-content">
           <h1>Chef Alerg</h1>
           <p>
             Você é o Chef Alerg, um detetive de alergias viajando pelo mundo
