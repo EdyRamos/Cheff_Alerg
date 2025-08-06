@@ -14,7 +14,7 @@
   "itemSpawnRate": 900,
   "duration": 80,
   "simultaneous": 3,
-  "itemScale": 0.1,
+  "itemScale": 0.07,
   "items": [
     {
       "key": "cake",

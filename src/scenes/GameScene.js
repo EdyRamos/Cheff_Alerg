@@ -198,12 +198,15 @@ export default class GameScene extends Phaser.Scene {
     const x = Phaser.Math.Between(itemSize / 2, width - itemSize / 2);
     const sprite = this.physics.add.image(x, -itemSize / 2, item.key);
     sprite.setDisplaySize(itemSize, itemSize);
+    const targetScaleX = sprite.scaleX;
+    const targetScaleY = sprite.scaleY;
     sprite.setScale(0);
     sprite.setData('itemData', item);
     sprite.setVelocityY(100 * this.speed);
     this.tweens.add({
       targets: sprite,
-      scale: { from: 0, to: 1 },
+      scaleX: { from: 0, to: targetScaleX },
+      scaleY: { from: 0, to: targetScaleY },
       duration: 300,
       ease: 'Back.Out',
     });
