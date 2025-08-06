@@ -14,7 +14,7 @@
   "itemSpawnRate": 1300,
   "duration": 70,
   "simultaneous": 2,
-  "itemScale": 0.09,
+  "itemScale": 0.07,
   "items": [
     {
       "key": "cookie",
