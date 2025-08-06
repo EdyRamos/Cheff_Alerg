@@ -63,9 +63,10 @@ export default class GameScene extends Phaser.Scene {
 
   create() {
     const { width, height } = this.scale;
+    const base = Math.min(width, height);
     const { phaseConfig } = this;
     const engine = this.engine;
-    const chefSize = width * 0.15;
+    const chefSize = base * 0.15;
     const hud = getHUDConfig(width, height);
     const { margin, iconSize, textStyle } = hud;
     this.hudContainer = this.add.container(0, 0).setDepth(10);
@@ -188,16 +189,24 @@ export default class GameScene extends Phaser.Scene {
   }
 
   spawnItem() {
-    const { width } = this.scale;
+    const { width, height } = this.scale;
+    const base = Math.min(width, height);
     const phaseConfig = this.phaseConfig;
     const item = Phaser.Utils.Array.GetRandom(phaseConfig.items);
     const sizeRatio = phaseConfig.itemScale || 0.1;
-    const itemSize = phaseConfig.itemSize || width * sizeRatio;
+    const itemSize = phaseConfig.itemSize || base * sizeRatio;
     const x = Phaser.Math.Between(itemSize / 2, width - itemSize / 2);
     const sprite = this.physics.add.image(x, -itemSize / 2, item.key);
     sprite.setDisplaySize(itemSize, itemSize);
+    sprite.setScale(0);
     sprite.setData('itemData', item);
     sprite.setVelocityY(100 * this.speed);
+    this.tweens.add({
+      targets: sprite,
+      scale: { from: 0, to: 1 },
+      duration: 300,
+      ease: 'Back.Out',
+    });
     sprite.setInteractive();
     sprite.on('pointerdown', () => {
       this.handleItemClick(sprite);
@@ -253,12 +262,21 @@ export default class GameScene extends Phaser.Scene {
     this.spawnRate = params.spawnRate;
     this.simultaneous = params.simultaneous;
     if (this.spawnLoop) this.spawnLoop.delay = this.spawnRate;
-
-    sprite.destroy();
+    sprite.disableInteractive();
+    sprite.body.enable = false;
     this.activeItems = this.activeItems.filter((i) => i !== sprite);
-    if (this.lives <= 0) {
-      this.endGame();
-    }
+    this.tweens.add({
+      targets: sprite,
+      scale: 0,
+      alpha: 0,
+      duration: 200,
+      onComplete: () => {
+        sprite.destroy();
+        if (this.lives <= 0) {
+          this.endGame();
+        }
+      },
+    });
   }
 
   updateScore() {
@@ -304,9 +322,14 @@ export default class GameScene extends Phaser.Scene {
 
   update() {
     this.activeItems.forEach((sprite) => {
-      if (sprite.y > this.scale.height + 32) {
-        sprite.destroy();
+      if (sprite.y > this.scale.height + sprite.displayHeight / 2) {
         this.activeItems = this.activeItems.filter((i) => i !== sprite);
+        this.tweens.add({
+          targets: sprite,
+          alpha: 0,
+          duration: 200,
+          onComplete: () => sprite.destroy(),
+        });
       }
     });
   }
