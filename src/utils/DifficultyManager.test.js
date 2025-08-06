@@ -28,5 +28,17 @@ describe('DifficultyManager', () => {
     expect(low).toEqual({ spawnRate: 3000, simultaneous: 1 });
     expect(high).toEqual({ spawnRate: 1000, simultaneous: 3 });
   });
+
+  test('clamps values to provided bounds', () => {
+    const dm = new DifficultyManager(5, {
+      minSpawnRate: 800,
+      maxSpawnRate: 2000,
+      minSimultaneous: 1,
+      maxSimultaneous: 2,
+    });
+    for (let i = 0; i < dm.windowSize; i++) dm.record(true);
+    const params = dm.getParameters(500, 5);
+    expect(params).toEqual({ spawnRate: 800, simultaneous: 2 });
+  });
 });
 

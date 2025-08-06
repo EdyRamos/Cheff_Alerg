@@ -11,9 +11,10 @@
   },
   "background": "/assets/images/bg/praia.png",
   "music": "/assets/audio/beach_loop.mp3",
-  "speed": 1.2,
-  "itemSpawnRate": 800,
+  "speed": 1.6,
+  "itemSpawnRate": 700,
   "duration": 90,
+  "simultaneous": 4,
   "itemScale": 0.08,
   "items": [
     {
