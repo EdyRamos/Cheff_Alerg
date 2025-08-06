@@ -22,7 +22,7 @@ Jogo educativo casual de reflexo que desafia crianças e adultos a identificar e
 
 ## Demonstração
 
-![Chef Alerg GIF](https://user-images.githubusercontent.com/SEU_USUARIO/placeholder-chef-alerg.gif)
+![Chef Alerg Logo](src/assets/images/logo_chef_alerg.png)
 
 ---
 
