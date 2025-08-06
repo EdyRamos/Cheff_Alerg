@@ -175,15 +175,7 @@ export default class GameScene extends Phaser.Scene {
     });
     if (this.duration) {
       this.time.delayedCall(this.duration * 1000, () => {
-        this.scene.pause();
-        this.bgMusic.stop();
-        this.add
-          .text(width / 2, height / 2, 'Fim de Jogo', {
-            fontSize: '32px',
-            fill: '#f00',
-          })
-          .setOrigin(0.5);
-        if (typeof this.onGameOver === 'function') this.onGameOver();
+        this.endGame(true);
       });
     }
   }
@@ -308,7 +300,7 @@ export default class GameScene extends Phaser.Scene {
     });
   }
 
-  endGame() {
+  endGame(success = false) {
     this.scene.pause();
     this.bgMusic.stop();
     this.add
@@ -317,7 +309,7 @@ export default class GameScene extends Phaser.Scene {
         fill: '#f00',
       })
       .setOrigin(0.5);
-    if (typeof this.onGameOver === 'function') this.onGameOver();
+    if (typeof this.onGameOver === 'function') this.onGameOver({ success });
   }
 
   update() {

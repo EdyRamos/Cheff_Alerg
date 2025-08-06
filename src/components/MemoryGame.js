@@ -86,17 +86,21 @@ export default function MemoryGame() {
 
   const handleReturnToMenu = () => navigateWithTransition('Voltando ao menu...');
 
-  // Após o término de uma fase, destrava próxima fase e direciona para a tela de transição
-  const handlePhaseComplete = () => {
-    const idx = PHASES.findIndex((p) => p.key === phase);
-    const next = PHASES[idx + 1];
-    if (next && !unlockedPhases.includes(next.key)) {
-      unlockPhase(next.key);
-    }
-    if (next) {
-      navigate(`/transition/${next.key}`);
+  // Após o término de uma fase, destrava próxima fase somente em caso de sucesso
+  const handlePhaseComplete = (result) => {
+    if (result?.success) {
+      const idx = PHASES.findIndex((p) => p.key === phase);
+      const next = PHASES[idx + 1];
+      if (next && !unlockedPhases.includes(next.key)) {
+        unlockPhase(next.key);
+      }
+      if (next) {
+        navigate(`/transition/${next.key}`);
+      } else {
+        navigateWithTransition('Fim de jogo!');
+      }
     } else {
-      navigateWithTransition('Fim de jogo!');
+      navigateWithTransition('Tente novamente!');
     }
   };
 
