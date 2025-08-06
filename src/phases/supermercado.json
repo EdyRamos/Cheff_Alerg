@@ -10,10 +10,10 @@
   },
   "background": "/assets/images/bg/supermercado.png",
   "music": "/assets/audio/background.ogg",
-  "speed": 1.1,
-  "itemSpawnRate": 1400,
+  "speed": 1.2,
+  "itemSpawnRate": 1300,
   "duration": 70,
-  "simultaneous": 3,
+  "simultaneous": 2,
   "itemScale": 0.09,
   "items": [
     {

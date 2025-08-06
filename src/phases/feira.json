@@ -10,10 +10,10 @@
   },
   "background": "/assets/images/bg/feira_day.png",
   "music": "/assets/audio/background.ogg",
-  "speed": 1,
-  "itemSpawnRate": 1500,
+  "speed": 0.9,
+  "itemSpawnRate": 1600,
   "duration": 60,
-  "simultaneous": 2,
+  "simultaneous": 1,
   "itemScale": 0.09,
   "items": [
     {

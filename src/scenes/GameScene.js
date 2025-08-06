@@ -21,9 +21,11 @@ export default class GameScene extends Phaser.Scene {
     this.activeItems = [];
     this.lastSpawn = 0;
     this.difficulty = new DifficultyManager();
-    this.spawnRate =
+    this.baseSpawnRate =
       phaseConfig.itemSpawnRate || phaseConfig.spawnRate || 1500;
-    this.simultaneous = phaseConfig.simultaneous || 2;
+    this.baseSimultaneous = phaseConfig.simultaneous || 2;
+    this.spawnRate = this.baseSpawnRate;
+    this.simultaneous = this.baseSimultaneous;
     this.speed = phaseConfig.speed || 1;
     this.duration = phaseConfig.duration || null;
     this.tips = phaseConfig.tips || [];
@@ -161,7 +163,7 @@ export default class GameScene extends Phaser.Scene {
     };
     pauseButton.on('pointerdown', launchPause);
     this.input.keyboard.on('keydown-P', launchPause);
-    this.time.addEvent({
+    this.spawnLoop = this.time.addEvent({
       delay: this.spawnRate,
       loop: true,
       callback: () => {
@@ -223,24 +225,35 @@ export default class GameScene extends Phaser.Scene {
     const bit = item.bitmaskBit;
     const isAllergen =
       typeof bit === 'number' && (this.bitmask & (1 << bit)) !== 0;
+    const correct = !isAllergen && !item.trap;
     if (isAllergen) {
-      this.lives -= 1;
+      this.animateChef('miss');
       this.sound.play('allergenSound');
+      this.lives -= 1;
       this.updateLives();
       this.showTip();
-      this.animateChef('miss');
     } else if (item.trap) {
-      this.score = Math.max(0, this.score - (item.penalty || 10));
-      this.sound.play('allergenSound');
-      this.updateScore();
       this.animateChef('miss');
+      this.sound.play('allergenSound');
+      this.score = Math.max(0, this.score - (item.penalty || 10));
+      this.updateScore();
     } else {
       const bonus = item.bonus || 0;
-      this.score += 10 + bonus;
-      this.sound.play('safeSound');
-      this.updateScore();
       this.animateChef('collect');
+      this.sound.play('safeSound');
+      this.score += 10 + bonus;
+      this.updateScore();
     }
+
+    this.difficulty.record(correct);
+    const params = this.difficulty.getParameters(
+      this.baseSpawnRate,
+      this.baseSimultaneous
+    );
+    this.spawnRate = params.spawnRate;
+    this.simultaneous = params.simultaneous;
+    if (this.spawnLoop) this.spawnLoop.delay = this.spawnRate;
+
     sprite.destroy();
     this.activeItems = this.activeItems.filter((i) => i !== sprite);
     if (this.lives <= 0) {

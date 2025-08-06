@@ -6,9 +6,13 @@
  * events and linearly interpolates between min and max values.
  */
 export default class DifficultyManager {
-  constructor(windowSize = 20) {
+  constructor(windowSize = 20, bounds = {}) {
     this.windowSize = windowSize;
     this.events = [];
+    this.minSpawnRate = bounds.minSpawnRate ?? 700;
+    this.maxSpawnRate = bounds.maxSpawnRate ?? 3000;
+    this.minSimultaneous = bounds.minSimultaneous ?? 1;
+    this.maxSimultaneous = bounds.maxSimultaneous ?? 5;
   }
 
   /**
@@ -43,8 +47,16 @@ export default class DifficultyManager {
     const acc = this.getAccuracy();
     // Map accuracy [0,1] to spawn factor [0.5, 1.5].
     const factor = 0.5 + acc;
-    const spawnRate = Math.max(500, baseSpawn / factor);
-    const simultaneous = Math.max(1, Math.round(baseSimultaneous * factor));
+    const rawSpawn = baseSpawn / factor;
+    const rawSim = Math.round(baseSimultaneous * factor);
+    const spawnRate = Math.min(
+      this.maxSpawnRate,
+      Math.max(this.minSpawnRate, rawSpawn)
+    );
+    const simultaneous = Math.min(
+      this.maxSimultaneous,
+      Math.max(this.minSimultaneous, rawSim)
+    );
     return { spawnRate, simultaneous };
   }
 }
