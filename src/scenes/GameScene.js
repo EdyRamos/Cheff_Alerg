@@ -64,12 +64,14 @@ export default class GameScene extends Phaser.Scene {
 
   create() {
     const { width, height } = this.scale;
-    const base = Math.min(width, height);
+    const base = Math.max(height, 320);
     const { phaseConfig } = this;
     const engine = this.engine;
-    const chefSize = base * 0.15;
+    // RESOLVIDO: Usa chefSize mínimo e getHUDConfig mais flexível
+    const chefSize = Math.max(base * 0.15, 32);
     this.hud = getHUDConfig(width, height, chefSize);
     const { margin, iconSize, textStyle } = this.hud;
+
     this.hudContainer = this.add.container(0, 0).setDepth(10);
     if (phaseConfig.background) {
       const bg = this.add.image(width / 2, height / 2, 'background');
@@ -196,9 +198,9 @@ export default class GameScene extends Phaser.Scene {
     if (typeof width !== 'number' || typeof height !== 'number') return;
 
     const base = Math.min(width, height);
-    const chefSize = base * 0.15;
-    const hud = getHUDConfig(width, height);
-    const { margin, iconSize, textStyle, tip } = hud;
+    const chefSize = Math.max(base * 0.15, 32);
+    this.hud = getHUDConfig(width, height, chefSize);
+    const { margin, iconSize, textStyle, tip } = this.hud;
 
     this.scoreContainer?.setPosition(margin, margin);
     this.scoreIcon?.setDisplaySize(iconSize, iconSize);
@@ -242,11 +244,12 @@ export default class GameScene extends Phaser.Scene {
 
   spawnItem() {
     const { width, height } = this.scale;
-    const base = Math.min(width, height);
+    const base = Math.max(height, 320);
     const phaseConfig = this.phaseConfig;
     const item = Phaser.Utils.Array.GetRandom(phaseConfig.items);
     const sizeRatio = phaseConfig.itemScale || 0.1;
-    const itemSize = phaseConfig.itemSize || base * sizeRatio;
+    const itemSize =
+      phaseConfig.itemSize || Math.max(base * sizeRatio, 32);
     const x = Phaser.Math.Between(itemSize / 2, width - itemSize / 2);
     const sprite = this.physics.add.image(x, -itemSize / 2, item.key);
     sprite.setDisplaySize(itemSize, itemSize);
@@ -421,4 +424,3 @@ export default class GameScene extends Phaser.Scene {
     });
   }
 }
-
