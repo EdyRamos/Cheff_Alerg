@@ -34,6 +34,7 @@ export default class GameScene extends Phaser.Scene {
     this.tipCard = null;
     this.lifeIcons = [];
     this.chef = null;
+    this.hud = null;
   }
 
   preload() {
@@ -67,8 +68,8 @@ export default class GameScene extends Phaser.Scene {
     const { phaseConfig } = this;
     const engine = this.engine;
     const chefSize = base * 0.15;
-    const hud = getHUDConfig(width, height);
-    const { margin, iconSize, textStyle } = hud;
+    this.hud = getHUDConfig(width, height, chefSize);
+    const { margin, iconSize, textStyle } = this.hud;
     this.hudContainer = this.add.container(0, 0).setDepth(10);
     if (phaseConfig.background) {
       const bg = this.add.image(width / 2, height / 2, 'background');
@@ -131,17 +132,17 @@ export default class GameScene extends Phaser.Scene {
     }
     // Tips
     this.tipCard = this.add
-      .image(width / 2, hud.tip.y, 'uiTipBg')
+      .image(width / 2, this.hud.tip.y, 'uiTipBg')
       .setOrigin(0.5)
       .setDepth(9)
       .setVisible(false)
-      .setDisplaySize(hud.tip.cardWidth, hud.tip.cardHeight);
+      .setDisplaySize(this.hud.tip.cardWidth, this.hud.tip.cardHeight);
     this.tipText = this.add
-      .text(width / 2, hud.tip.y, '', {
+      .text(width / 2, this.hud.tip.y, '', {
         fontSize: `${iconSize * 0.6}px`,
         fill: '#000',
         align: 'center',
-        wordWrap: { width: hud.tip.cardWidth - margin * 2 },
+        wordWrap: { width: this.hud.tip.cardWidth - margin * 2 },
       })
       .setOrigin(0.5)
       .setDepth(10)
@@ -346,8 +347,31 @@ export default class GameScene extends Phaser.Scene {
     this.animateHUD(this.livesContainer);
   }
 
+  updateTipLayout() {
+    if (!this.tipCard || !this.tipText || !this.hud) return;
+    const { width } = this.scale;
+    const { tip, margin, iconSize } = this.hud;
+    this.tipCard
+      .setPosition(width / 2, tip.y)
+      .setDisplaySize(tip.cardWidth, tip.cardHeight);
+    this.tipText
+      .setPosition(width / 2, tip.y)
+      .setStyle({
+        fontSize: `${iconSize * 0.6}px`,
+        fill: '#000',
+        align: 'center',
+        wordWrap: { width: tip.cardWidth - margin * 2 },
+      });
+  }
+
   showTip() {
     if (this.tips.length === 0) return;
+    this.hud = getHUDConfig(
+      this.scale.width,
+      this.scale.height,
+      this.chef.displayHeight
+    );
+    this.updateTipLayout();
     const tip = Phaser.Utils.Array.GetRandom(this.tips);
     this.tipCard.setVisible(true);
     this.tipText.setText(tip).setVisible(true);
