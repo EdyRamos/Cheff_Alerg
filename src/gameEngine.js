@@ -40,6 +40,9 @@ export default class PhaserGameEngine {
     this.resizeHandler = () => {
       const { width: newWidth, height: newHeight } = parent.getBoundingClientRect();
       this.game.scale.resize(newWidth, newHeight);
+      this.game.scene.getScenes(true).forEach((scene) => {
+        scene.events.emit('resize', newWidth, newHeight);
+      });
     };
     window.addEventListener('resize', this.resizeHandler);
   }
