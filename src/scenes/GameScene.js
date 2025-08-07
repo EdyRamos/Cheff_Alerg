@@ -63,10 +63,10 @@ export default class GameScene extends Phaser.Scene {
 
   create() {
     const { width, height } = this.scale;
-    const base = Math.min(width, height);
+    const base = Math.max(height, 320);
     const { phaseConfig } = this;
     const engine = this.engine;
-    const chefSize = base * 0.15;
+    const chefSize = Math.max(base * 0.15, 32);
     const hud = getHUDConfig(width, height);
     const { margin, iconSize, textStyle } = hud;
     this.hudContainer = this.add.container(0, 0).setDepth(10);
@@ -182,11 +182,12 @@ export default class GameScene extends Phaser.Scene {
 
   spawnItem() {
     const { width, height } = this.scale;
-    const base = Math.min(width, height);
+    const base = Math.max(height, 320);
     const phaseConfig = this.phaseConfig;
     const item = Phaser.Utils.Array.GetRandom(phaseConfig.items);
     const sizeRatio = phaseConfig.itemScale || 0.1;
-    const itemSize = phaseConfig.itemSize || base * sizeRatio;
+    const itemSize =
+      phaseConfig.itemSize || Math.max(base * sizeRatio, 32);
     const x = Phaser.Math.Between(itemSize / 2, width - itemSize / 2);
     const sprite = this.physics.add.image(x, -itemSize / 2, item.key);
     sprite.setDisplaySize(itemSize, itemSize);
