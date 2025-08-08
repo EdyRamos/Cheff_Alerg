@@ -44,6 +44,24 @@ export default function Tutorial() {
           />
           sobre o ingrediente.
         </p>
+       <p>
+         Contaminação cruzada é um perigo comum: utensílios, tábuas e
+         superfícies usadas com glúten podem transferir partículas para
+         alimentos seguros. Em cozinhas compartilhadas, limpe bem os
+         equipamentos e, se possível, tenha utensílios exclusivos para
+         preparos sem glúten.
+       </p>
+       <p>
+         A leitura de rótulos é fundamental. Procure sempre o selo “sem
+         glúten” e desconfie de ingredientes duvidosos ou listas incompletas.
+         Produtos sem indicação clara podem conter traços de glúten.
+       </p>
+       <p>
+         Boas práticas incluem lavar as mãos antes de cozinhar, separar
+         alimentos com e sem glúten e evitar usar a mesma esponja ou
+         pano em utensílios diferentes. Pequenas migalhas podem causar
+         problemas para pessoas sensíveis.
+       </p>
         <p>
           Use o ícone
           <img
