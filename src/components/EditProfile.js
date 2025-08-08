@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { saveProfile } from '../services/firestore';
 import { saveNfcPreference } from '../utils/storage';
 import { arrayToBitmask, bitmaskToArray } from '../utils/bitmask';
 import { useStore } from '../store';
-import { ALLERGEN_NAMES } from '../constants/allergens';
+import { GLUTEN_SOURCES } from '../constants/allergens';
 import PageLayout from './PageLayout';
 
-// Lista de alérgenos importada de src/constants/allergens.js. A ordem deve ser mantida.
+// Lista de fontes de glúten importada de src/constants/allergens.js. A ordem deve ser mantida.
 
 export default function EditProfile() {
   const navigate = useNavigate();
@@ -17,8 +17,9 @@ export default function EditProfile() {
   const [nome, setNome] = useState(profile?.nome || '');
   const [idade, setIdade] = useState(profile?.idade ?? '');
   const [selectedBits, setSelectedBits] = useState(
-    profile ? bitmaskToArray(profile.bitmask, profile.bitCount || ALLERGEN_NAMES.length) : []
+    profile ? bitmaskToArray(profile.bitmask, profile.bitCount || GLUTEN_SOURCES.length) : []
   );
+  const [hasCeliac, setHasCeliac] = useState(false);
   const [useNfc, setUseNfc] = useState(false);
   const [saving, setSaving] = useState(false);
 
@@ -27,7 +28,16 @@ export default function EditProfile() {
     return null;
   }
 
-  const toggleAlergeno = (index) => {
+  // Ajusta a lista de fontes de glúten automaticamente ao marcar "Tenho doença celíaca"
+  useEffect(() => {
+    if (hasCeliac) {
+      setSelectedBits([...Array(GLUTEN_SOURCES.length).keys()]); // seleciona todos
+    } else if (selectedBits.length === GLUTEN_SOURCES.length) {
+      setSelectedBits([]); // desmarca todos
+    }
+  }, [hasCeliac]);
+
+  const toggleFonte = (index) => {
     setSelectedBits((prev) => {
       if (prev.includes(index)) {
         return prev.filter((bit) => bit !== index);
@@ -50,6 +60,7 @@ export default function EditProfile() {
         nome: nome.trim(),
         idade: Number(idade),
         bitmask,
+        bitCount: GLUTEN_SOURCES.length,
       };
       await saveProfile(updated, { nfc: useNfc });
       saveNfcPreference(useNfc);
@@ -91,16 +102,28 @@ export default function EditProfile() {
               />
             </label>
           </div>
+
           <div className="form-group">
-            <strong>Selecione seus alérgenos:</strong>
+            <label>
+              <input
+                type="checkbox"
+                checked={hasCeliac}
+                onChange={(e) => setHasCeliac(e.target.checked)}
+              />
+              Tenho doença celíaca (seleciona automaticamente todas as fontes de glúten)
+            </label>
+          </div>
+
+          <div className="form-group">
+            <strong>Selecione as fontes de glúten:</strong>
             <ul className="list-unstyled">
-              {ALLERGEN_NAMES.map((name, idx) => (
+              {GLUTEN_SOURCES.map((name, idx) => (
                 <li key={idx}>
                   <label>
                     <input
                       type="checkbox"
                       checked={selectedBits.includes(idx)}
-                      onChange={() => toggleAlergeno(idx)}
+                      onChange={() => toggleFonte(idx)}
                     />
                     {name}
                   </label>
@@ -108,6 +131,7 @@ export default function EditProfile() {
               ))}
             </ul>
           </div>
+
           <div className="form-group">
             <label>
               <input
@@ -118,6 +142,7 @@ export default function EditProfile() {
               Usar NFC para armazenar o perfil
             </label>
           </div>
+
           <button className="btn" type="submit" disabled={saving}>
             {saving ? 'Salvando…' : 'Salvar Perfil'}
           </button>
