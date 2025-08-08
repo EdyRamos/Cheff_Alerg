@@ -198,6 +198,73 @@ export default class GameScene extends Phaser.Scene {
     this.events.on('resize', this.handleResize, this);
   }
 
+  handleResize(gameSize) {
+    const { width, height } = gameSize;
+    const base = Math.max(height, 320);
+    const chefSize = Math.max(base * 0.15, 32);
+
+    this.hud = getHUDConfig(width, height, chefSize);
+    const { margin, iconSize, textStyle } = this.hud;
+
+    if (this.scoreContainer) {
+      this.scoreContainer.setPosition(margin, margin);
+      this.scoreIcon.setDisplaySize(iconSize, iconSize);
+      this.scoreText
+        .setPosition(iconSize + margin / 2, 0)
+        .setStyle(textStyle);
+    }
+
+    if (this.livesContainer) {
+      this.livesContainer.setPosition(width - margin, margin);
+      this.lifeIcons.forEach((icon, index) => {
+        icon
+          .setDisplaySize(iconSize, iconSize)
+          .setPosition(-index * (iconSize + margin / 2), 0);
+      });
+    }
+
+    if (this.timeContainer) {
+      this.timeContainer.setPosition(width / 2, margin);
+      this.timeIcon
+        .setDisplaySize(iconSize, iconSize)
+        .setPosition(-iconSize - margin / 2, 0);
+      this.timeText.setPosition(0, 0).setStyle(textStyle);
+    }
+
+    if (this.tipCard && this.tipText) {
+      this.updateTipLayout();
+    }
+
+    if (this.chef) {
+      this.chef
+        .setPosition(width / 2, height - chefSize / 2 - margin * 2)
+        .setDisplaySize(chefSize, chefSize);
+    }
+
+    if (this.pauseButton) {
+      this.pauseButton
+        .setPosition(width - margin * 2, margin * 2)
+        .setDisplaySize(iconSize, iconSize);
+    }
+  }
+
+  updateTipLayout() {
+    if (!this.tipCard || !this.tipText || !this.hud) return;
+    const { width } = this.scale;
+    const { margin, iconSize, tip } = this.hud;
+    this.tipCard
+      .setDisplaySize(tip.cardWidth, tip.cardHeight)
+      .setPosition(width / 2, tip.y);
+    this.tipText
+      .setPosition(width / 2, tip.y)
+      .setStyle({
+        fontSize: `${iconSize * 0.6}px`,
+        fill: '#000',
+        align: 'center',
+        wordWrap: { width: tip.cardWidth - margin * 2 },
+      });
+  }
+
   spawnItem() {
     const { width, height } = this.scale;
     const base = Math.max(height, 320);
