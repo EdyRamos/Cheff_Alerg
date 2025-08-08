@@ -2,7 +2,7 @@
   "transition": {
     "text": "Bem-vindo à Feira!",
     "image": "/assets/images/bg/feira_day.png",
-    "tip": "Dica: fique atento aos itens perigosos!",
+    "tip": "Dica: alguns produtos na feira podem conter glúten escondido!",
     "audio": "/assets/audio/safe.ogg",
     "duration": 4000,
     "skipAfter": 2000,
@@ -24,31 +24,31 @@
       "key": "banana",
       "spriteUrl": "/assets/images/items/banana.png",
       "trap": true,
-      "penalty": 5
+      "penalty": 5,
+      "crossContamination": true
     },
     {
-      "key": "peanut",
-      "spriteUrl": "/assets/images/items/peanut.png",
-      "bitmaskBit": 2
+      "key": "bread",
+      "spriteUrl": "/assets/images/items/bread.png",
+      "containsGluten": true
     },
     {
-      "key": "hazelnut",
-      "spriteUrl": "/assets/images/items/hazelnut.png",
-      "bitmaskBit": 7
+      "key": "wheat",
+      "spriteUrl": "/assets/images/items/wheat.png",
+      "containsGluten": true
     },
     {
-      "key": "soybean",
-      "spriteUrl": "/assets/images/items/soybean.png",
-      "bitmaskBit": 3
+      "key": "pineapple",
+      "spriteUrl": "/assets/images/items/pineapple.png"
     },
     {
       "key": "strawberry",
       "spriteUrl": "/assets/images/items/strawberry.png",
-      "bitmaskBit": 11
+      "crossContamination": true
     }
   ],
   "tips": [
-    "Amendoim e soja são alergênicos comuns na feira.",
-    "Fique de olho em castanhas escondidas em doces."
+    "Pães e farinhas expostas carregam muito glúten.",
+    "Frutas cortadas com utensílios usados em massas podem contaminar."
   ]
 }

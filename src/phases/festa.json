@@ -6,7 +6,7 @@
     "audio": "/assets/audio/safe.ogg",
     "duration": 3000,
     "skipAfter": 2000,
-    "tip": "Dica: cuidado com ingredientes escondidos nos doces!"
+    "tip": "Dica: doces podem esconder glúten nas receitas!"
   },
   "background": "/assets/images/bg/festa.png",
   "music": "/assets/audio/background.ogg",
@@ -19,36 +19,35 @@
     {
       "key": "cake",
       "spriteUrl": "/assets/images/items/cake.png",
-      "bitmaskBit": 1
+      "containsGluten": true
     },
     {
       "key": "icecream",
       "spriteUrl": "/assets/images/items/icecream.png",
-      "bitmaskBit": 0
+      "crossContamination": true
     },
     {
-      "key": "chocolate",
-      "spriteUrl": "/assets/images/items/chocolate.png",
-      "bitmaskBit": 2
+      "key": "cookie",
+      "spriteUrl": "/assets/images/items/cookie.png",
+      "containsGluten": true
     },
     {
       "key": "candy",
       "spriteUrl": "/assets/images/items/candy.png"
     },
     {
-      "key": "coconut",
-      "spriteUrl": "/assets/images/items/coconut.png",
-      "bitmaskBit": 9
+      "key": "chocolate",
+      "spriteUrl": "/assets/images/items/chocolate.png",
+      "crossContamination": true
     },
     {
       "key": "strawberry",
       "spriteUrl": "/assets/images/items/strawberry.png",
-      "bitmaskBit": 11,
       "bonus": 20
     }
   ],
   "tips": [
-    "Bolos e sorvetes quase sempre contêm leite e ovos.",
-    "Doces coloridos podem ter traços de amendoim."
+    "Bolos e biscoitos são ricos em glúten.",
+    "Utilize utensílios limpos para evitar contaminação cruzada."
   ]
 }

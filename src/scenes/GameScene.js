@@ -289,9 +289,7 @@ export default class GameScene extends Phaser.Scene {
 
   handleItemClick(sprite) {
     const item = sprite.getData('itemData');
-    const bit = item.bitmaskBit;
-    const isAllergen =
-      typeof bit === 'number' && (this.bitmask & (1 << bit)) !== 0;
+    const isAllergen = item.containsGluten || item.crossContamination;
     const correct = !isAllergen && !item.trap;
     if (isAllergen) {
       this.animateChef('miss');

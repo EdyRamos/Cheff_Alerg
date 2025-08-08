@@ -6,7 +6,7 @@
     "audio": "/assets/audio/safe.ogg",
     "duration": 3000,
     "skipAfter": 2000,
-    "tip": "Dica: leia os rótulos com atenção!"
+    "tip": "Dica: procure rótulos 'sem glúten' nos produtos!"
   },
   "background": "/assets/images/bg/supermercado.png",
   "music": "/assets/audio/background.ogg",
@@ -19,44 +19,41 @@
     {
       "key": "cookie",
       "spriteUrl": "/assets/images/items/cookie.png",
-      "bitmaskBit": 1
+      "containsGluten": true
     },
     {
       "key": "milk",
-      "spriteUrl": "/assets/images/items/milk.png",
-      "bitmaskBit": 0
+      "spriteUrl": "/assets/images/items/milk.png"
     },
     {
       "key": "bread",
       "spriteUrl": "/assets/images/items/bread.png",
-      "bitmaskBit": 4,
+      "containsGluten": true,
       "trap": true,
       "penalty": 10
     },
     {
       "key": "cereal",
       "spriteUrl": "/assets/images/items/cereal.png",
-      "bitmaskBit": 8
+      "containsGluten": true
     },
     {
       "key": "cheese",
       "spriteUrl": "/assets/images/items/cheese.png",
-      "bitmaskBit": 0
+      "crossContamination": true
     },
     {
       "key": "egg",
-      "spriteUrl": "/assets/images/items/egg.png",
-      "bitmaskBit": 1
+      "spriteUrl": "/assets/images/items/egg.png"
     },
     {
       "key": "pineapple",
       "spriteUrl": "/assets/images/items/pineapple.png",
-      "bitmaskBit": 10,
       "bonus": 15
     }
   ],
   "tips": [
-    "Leia os rótulos para evitar glúten e lactose.",
-    "Produtos industrializados podem esconder alergênicos."
+    "Leia os rótulos e procure por produtos com selo 'sem glúten'.",
+    "Itens a granel podem ter contato com farinhas."
   ]
 }

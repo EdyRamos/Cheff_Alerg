@@ -7,7 +7,7 @@
     "audio": "/assets/audio/safe.ogg",
     "duration": 3000,
     "skipAfter": 2000,
-    "tip": "Dica: frutos do mar podem conter alérgenos!"
+    "tip": "Dica: empanados de praia podem conter farinha!"
   },
   "background": "/assets/images/bg/praia.png",
   "music": "/assets/audio/beach_loop.mp3",
@@ -18,47 +18,39 @@
   "itemScale": 0.07,
   "items": [
     {
-      "allergens": ["shellfish"],
       "key": "shrimp",
       "spriteUrl": "/assets/images/items/shrimp.png",
-      "bitmaskBit": 6
+      "crossContamination": true
     },
     {
-      "allergens": ["fish"],
       "key": "fish",
       "spriteUrl": "/assets/images/items/fish.png",
-      "bitmaskBit": 5
+      "crossContamination": true
     },
     {
-      "allergens": ["shellfish"],
       "key": "squid",
       "spriteUrl": "/assets/images/items/squid.png",
-      "bitmaskBit": 6,
+      "crossContamination": true,
       "trap": true,
       "penalty": 5
     },
     {
-      "allergens": ["coconut"],
-      "key": "coconut",
-      "spriteUrl": "/assets/images/items/coconut.png",
-      "bitmaskBit": 9
-    },
-    {
-      "allergens": ["gluten", "egg", "milk"],
       "key": "cake",
       "spriteUrl": "/assets/images/items/cake.png",
-      "bitmaskBit": 1
+      "containsGluten": true
     },
     {
-      "allergens": ["pineapple"],
+      "key": "coconut",
+      "spriteUrl": "/assets/images/items/coconut.png"
+    },
+    {
       "key": "pineapple",
       "spriteUrl": "/assets/images/items/pineapple.png",
-      "bitmaskBit": 10,
       "bonus": 15
     }
   ],
   "tips": [
-    "Frutos do mar são a causa nº1 de anafilaxia na praia!",
-    "Cuidado: bolos quase sempre têm ovo e leite."
+    "Frituras empanadas costumam usar farinha de trigo.",
+    "Separe petiscos 'sem glúten' de outros utensílios."
   ]
 }
