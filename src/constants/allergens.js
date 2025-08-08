@@ -1,15 +1,8 @@
-// Lista de alérgenos. A ordem corresponde aos bits armazenados no perfil.
-export const ALLERGEN_NAMES = [
-  'Leite',
-  'Ovo',
-  'Amendoim',
-  'Soja',
+// Fontes de glúten. A ordem corresponde aos bits armazenados no perfil.
+// Atualmente o bitmask representa apenas essas fontes de glúten, mantendo a estrutura para futuras expansões.
+export const GLUTEN_SOURCES = [
   'Trigo',
-  'Peixes',
-  'Frutos do Mar',
-  'Castanhas',
-  'Milho',
-  'Coco',
-  'Abacaxi',
-  'Morango',
+  'Cevada',
+  'Centeio',
+  'Aveia (contaminação)',
 ];

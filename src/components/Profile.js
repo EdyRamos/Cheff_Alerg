@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { loadProfile } from '../services/firestore';
 import { useStore } from '../store';
 import LoadingScreen from './LoadingScreen';
-import { ALLERGEN_NAMES } from '../constants/allergens';
+import { GLUTEN_SOURCES } from '../constants/allergens';
 import NavBar from './NavBar';
 import PageLayout from './PageLayout';
 
 /**
- * Displays the saved user profile along with a list of allergens to avoid.
+ * Displays the saved user profile along with a list of gluten sources to avoid.
  */
 export default function Profile() {
   const profile = useStore((s) => s.profile);
@@ -28,9 +28,9 @@ export default function Profile() {
     return <LoadingScreen />;
   }
 
-  // Compute a list of allergens from the bitmask for display.
-  const bitCount = profile.bitCount || ALLERGEN_NAMES.length;
-  const selected = ALLERGEN_NAMES.slice(0, bitCount).filter((_, idx) => (profile.bitmask & (1 << idx)) !== 0);
+  // Compute a list of gluten sources from the bitmask for display.
+  const bitCount = profile.bitCount || GLUTEN_SOURCES.length;
+  const selected = GLUTEN_SOURCES.slice(0, bitCount).filter((_, idx) => (profile.bitmask & (1 << idx)) !== 0);
 
   return (
     <>
@@ -45,7 +45,7 @@ export default function Profile() {
             <strong>Idade:</strong> {profile.idade}
           </p>
           <p>
-            <strong>Alérgenos selecionados:</strong>{' '}
+            <strong>Fontes de glúten selecionadas:</strong>{' '}
             {selected.length > 0 ? selected.join(', ') : 'Nenhum'}
           </p>
           <div className="flex-gap">
