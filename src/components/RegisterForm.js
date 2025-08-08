@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { saveProfile } from '../services/firestore';
 import { saveNfcPreference } from '../utils/storage';
 import { arrayToBitmask } from '../utils/bitmask';
-import { ALLERGEN_NAMES } from '../constants/allergens';
+import { GLUTEN_SOURCES } from '../constants/allergens';
 import PageLayout from './PageLayout';
 
-// Lista de alérgenos importada de src/constants/allergens.js. A ordem deve ser mantida.
+// Lista de fontes de glúten importada de src/constants/allergens.js. A ordem deve ser mantida.
 
 // Gera um UID simples combinando timestamp e número aleatório.
 const generateUid = () => {
@@ -25,7 +25,7 @@ export default function RegisterForm() {
   const [useNfc, setUseNfc] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  const toggleAlergeno = (index) => {
+  const toggleFonte = (index) => {
     setSelectedBits((prev) => {
       if (prev.includes(index)) {
         return prev.filter((bit) => bit !== index);
@@ -90,15 +90,15 @@ export default function RegisterForm() {
             </label>
           </div>
           <div className="form-group">
-            <strong>Selecione seus alérgenos:</strong>
+            <strong>Selecione as fontes de glúten:</strong>
             <ul className="list-unstyled">
-              {ALLERGEN_NAMES.map((name, idx) => (
+              {GLUTEN_SOURCES.map((name, idx) => (
                 <li key={idx}>
                   <label>
                     <input
                       type="checkbox"
                       checked={selectedBits.includes(idx)}
-                      onChange={() => toggleAlergeno(idx)}
+                      onChange={() => toggleFonte(idx)}
                     />
                     {name}
                   </label>
