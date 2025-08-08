@@ -28,23 +28,27 @@ Jogo educativo casual de reflexo que desafia crianças e adultos a identificar e
 
 ## Funcionalidades
 
-- 🎯 **Gameplay de Reflexo**  
-  Tocar em itens seguros e evitar itens alergênicos antes que desapareçam.
-- 👤 **Perfil de Usuário**  
-  Cadastro simples com nome, idade e bitmask de alergênicos.
-- 🧩 **Bitmask de Alergênicos**  
-  Representa até 7 alergênicos principais via máscara de bits.
-- 🎚️ **Dificuldade Dinâmica**  
+- 🍞 **Reconhecimento de Glúten**
+  Analisa rótulos e itens do jogo para diferenciar alimentos com e sem glúten, destacando o selo "sem glúten".
+- ⚠️ **Contaminação Cruzada**
+  Avisa sobre produtos e superfícies com risco de traços de glúten.
+- 📊 **Métricas de Leitura de Rótulos**
+  Registra tempo de leitura e percentual de acertos ao identificar rótulos.
+- 🎯 **Gameplay de Reflexo**
+  Toque em itens seguros e evite ingredientes com glúten antes que desapareçam.
+- 👤 **Perfil de Usuário**
+  Cadastro simples com nome, idade e histórico de leituras.
+- 🎚️ **Dificuldade Dinâmica**
   Ajuste automático de taxa de spawn e quantidade simultânea baseado na performance.
-- 📱 **PWA Ready**  
+- 📱 **PWA Ready**
   Instalável em dispositivos móveis e desktop.
- - 🔌 **Firebase + Web NFC**
-   Perfis salvos no Firestore e opcionalmente gravados em tags NFC.
-- 📊 **Fases Configuráveis**  
+- 🔌 **Firebase + Web NFC**
+  Perfis salvos no Firestore e opcionalmente gravados em tags NFC.
+- 🗺️ **Fases Configuráveis**
   Carga de JSON para cada cenário (feira, supermercado, festa…).
-- 🎉 **Efeitos Visuais**  
+- 🎉 **Efeitos Visuais**
   Confetes (particles) e dicas contextuais no jogo.
-- 🔄 **Hot‑reload**  
+- 🔄 **Hot‑reload**
   Desenvolvimento rápido via Create‑React‑App.
 
 ---
@@ -98,16 +102,17 @@ Jogo educativo casual de reflexo que desafia crianças e adultos a identificar e
 
 ## Uso
 
-1. **Cadastro**: Preencha nome, idade e selecione alergênicos.
+1. **Cadastro**: Informe nome, idade e se adota dieta sem glúten.
 2. **Escolha a fase**: Feira, Supermercado, Festa etc.
 3. **Jogue**:
 
-   * Toque em itens seguros para ganhar pontos.
-   * Evite itens com alérgenos marcados no seu perfil.
+   * Toque em itens com rótulo "sem glúten" para ganhar pontos.
+   * Evite produtos com glúten ou indicados como possivelmente contaminados.
+   * Leia os rótulos e confirme o selo antes de tocar.
    * Cada erro reduz uma vida; zero vidas encerra o jogo.
    * Aperte **P** ou o botão "Pausar" para abrir o menu de pausa.
-4. **Pontuação**: +10 pontos por acerto.
-5. **Fim de Jogo**: Veja seu resultado e reinicie.
+4. **Pontuação**: +10 pontos por acerto e tempo de leitura registrado.
+5. **Fim de Jogo**: Veja estatísticas de leitura e reinicie.
 
 ---
 
@@ -182,6 +187,14 @@ Para adicionar uma nova fase:
 * **Imagens**: PNG de 128×128 px para cada alimento.
 * **Placeholder**: `missing.png` (8×8 px, branco).
 * **Áudio**: você pode colocar WAV/MP3 em `public/assets/audio`.
+
+---
+
+## Referências Educativas
+
+- [FENACELBRA – Federação Nacional das Associações de Celíacos do Brasil](https://fenacelbra.org.br/)
+- [ANVISA – Rotulagem de Alimentos e a declaração "Sem Glúten"](https://www.gov.br/anvisa/pt-br/assuntos/alimentos/rotulagem/rotulagem-de-alimentos-alergenicos-e-sem-gluten)
+- [Celiac Disease Foundation – Gluten-Free Labeling and Celiac Disease Education](https://celiac.org/)
 
 ---
 
