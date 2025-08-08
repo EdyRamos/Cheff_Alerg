@@ -423,11 +423,40 @@ export default class GameScene extends Phaser.Scene {
     this.activeItems.forEach((sprite) => {
       if (sprite.y > this.scale.height + sprite.displayHeight / 2) {
         this.activeItems = this.activeItems.filter((i) => i !== sprite);
+
+        const item = sprite.getData('itemData');
+        const bit = item?.bitmaskBit;
+        const isAllergen = typeof bit === 'number' && (this.bitmask & (1 << bit)) !== 0;
+        const { containsGluten, crossContamination, trap } = item || {};
+        const safe = !containsGluten && !crossContamination && !isAllergen && !trap;
+
+        if (safe) {
+          if (this.lives > 0) {
+            this.lives -= 1;
+            this.updateLives();
+          } else {
+            this.score = Math.max(0, this.score - (item?.penalty || 5));
+            this.updateScore();
+          }
+        }
+
+        const correct = !safe;
+        this.difficulty.record(correct);
+        const params = this.difficulty.getParameters(this.baseSpawnRate, this.baseSimultaneous);
+        this.spawnRate = params.spawnRate;
+        this.simultaneous = params.simultaneous;
+        if (this.spawnLoop) this.spawnLoop.delay = this.spawnRate;
+
         this.tweens.add({
           targets: sprite,
           alpha: 0,
           duration: 200,
-          onComplete: () => sprite.destroy(),
+          onComplete: () => {
+            sprite.destroy();
+            if (this.lives <= 0) {
+              this.endGame();
+            }
+          },
         });
       }
     });
