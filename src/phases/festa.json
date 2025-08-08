@@ -6,7 +6,8 @@
     "audio": "/assets/audio/safe.ogg",
     "duration": 3000,
     "skipAfter": 2000,
-    "tip": "Dica: doces podem esconder glúten nas receitas!"
+    "tip": "Dica: doces podem esconder glúten nas receitas!",
+    "instructions": "Na Festa de Aniversário, muitos doces e bolos contêm glúten. Clique somente em itens seguros e fique atento a itens que se movem rapidamente, pois podem ser bônus!"
   },
   "background": "/assets/images/bg/festa.png",
   "music": "/assets/audio/background.ogg",
@@ -19,7 +20,8 @@
     {
       "key": "cake",
       "spriteUrl": "/assets/images/items/cake.png",
-      "containsGluten": true
+      "containsGluten": true,
+      "labelUrl": "/assets/images/items/cake.png"
     },
     {
       "key": "icecream",
@@ -33,7 +35,11 @@
     },
     {
       "key": "candy",
-      "spriteUrl": "/assets/images/items/candy.png"
+      "spriteUrl": "/assets/images/items/candy.png",
+      "runner": true,
+      "direction": "right",
+      "speed": 200,
+      "bonus": 5
     },
     {
       "key": "chocolate",
