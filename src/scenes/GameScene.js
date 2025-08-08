@@ -46,6 +46,9 @@ export default class GameScene extends Phaser.Scene {
     const { phaseConfig } = this;
     phaseConfig.items.forEach((item) => {
       this.load.image(item.key, item.spriteUrl);
+      if (item.labelUrl) {
+        this.load.image(`${item.key}_label`, item.labelUrl);
+      }
     });
     this.load.image('missing', '/assets/images/missing.png');
 
@@ -297,7 +300,15 @@ export default class GameScene extends Phaser.Scene {
   handleItemClick(sprite) {
     this.recordLabelTime();
     const item = sprite.getData('itemData');
+    if (!item) return;
+    if (item.labelUrl) {
+      this.showLabel(item, sprite);
+      return;
+    }
+    this.processItem(item, sprite);
+  }
 
+  processItem(item, sprite) {
     const bit = item.bitmaskBit;
     const isAllergen = typeof bit === 'number' && (this.bitmask & (1 << bit)) !== 0;
     const { containsGluten, crossContamination } = item;
@@ -358,6 +369,35 @@ export default class GameScene extends Phaser.Scene {
           this.endGame();
         }
       },
+    });
+  }
+
+  showLabel(item, sprite) {
+    this.labelTimerStart = this.time.now;
+    const overlay = this.add.rectangle(
+      this.scale.width / 2,
+      this.scale.height / 2,
+      this.scale.width,
+      this.scale.height,
+      0x000000,
+      0.7
+    ).setDepth(50);
+
+    const labelKey = `${item.key}_label`;
+    const labelImage = this.add
+      .image(this.scale.width / 2, this.scale.height / 2, labelKey)
+      .setDepth(51);
+
+    const scaleX = (this.scale.width * 0.8) / labelImage.width;
+    const scaleY = (this.scale.height * 0.8) / labelImage.height;
+    const scale = Math.min(scaleX, scaleY);
+    labelImage.setScale(scale);
+
+    this.time.delayedCall(2500, () => {
+      overlay.destroy();
+      labelImage.destroy();
+      this.recordLabelTime();
+      this.processItem(item, sprite);
     });
   }
 

@@ -503,6 +503,7 @@ export default class GameScene extends Phaser.Scene {
    * processed as usual via processItem().
    */
   showLabel(item, sprite) {
+    this.labelTimerStart = this.time.now;
     // Draw semi-transparent backdrop
     const overlay = this.add.rectangle(
       this.scale.width / 2,
@@ -528,6 +529,7 @@ export default class GameScene extends Phaser.Scene {
     this.time.delayedCall(2500, () => {
       overlay.destroy();
       labelImage.destroy();
+      this.recordLabelTime();
       this.processItem(item, sprite);
     });
   }
