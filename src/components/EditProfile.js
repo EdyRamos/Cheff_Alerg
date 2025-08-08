@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { saveProfile } from '../services/firestore';
 import { saveNfcPreference } from '../utils/storage';
@@ -19,6 +19,7 @@ export default function EditProfile() {
   const [selectedBits, setSelectedBits] = useState(
     profile ? bitmaskToArray(profile.bitmask, profile.bitCount || GLUTEN_SOURCES.length) : []
   );
+  const [hasCeliac, setHasCeliac] = useState(false);
   const [useNfc, setUseNfc] = useState(false);
   const [saving, setSaving] = useState(false);
 
@@ -26,6 +27,15 @@ export default function EditProfile() {
     navigate('/register');
     return null;
   }
+
+  // Ajusta a lista de fontes de glúten automaticamente ao marcar "Tenho doença celíaca"
+  useEffect(() => {
+    if (hasCeliac) {
+      setSelectedBits([...Array(GLUTEN_SOURCES.length).keys()]); // seleciona todos
+    } else if (selectedBits.length === GLUTEN_SOURCES.length) {
+      setSelectedBits([]); // desmarca todos
+    }
+  }, [hasCeliac]);
 
   const toggleFonte = (index) => {
     setSelectedBits((prev) => {
@@ -50,6 +60,7 @@ export default function EditProfile() {
         nome: nome.trim(),
         idade: Number(idade),
         bitmask,
+        bitCount: GLUTEN_SOURCES.length,
       };
       await saveProfile(updated, { nfc: useNfc });
       saveNfcPreference(useNfc);
@@ -91,6 +102,18 @@ export default function EditProfile() {
               />
             </label>
           </div>
+
+          <div className="form-group">
+            <label>
+              <input
+                type="checkbox"
+                checked={hasCeliac}
+                onChange={(e) => setHasCeliac(e.target.checked)}
+              />
+              Tenho doença celíaca (seleciona automaticamente todas as fontes de glúten)
+            </label>
+          </div>
+
           <div className="form-group">
             <strong>Selecione as fontes de glúten:</strong>
             <ul className="list-unstyled">
@@ -108,6 +131,7 @@ export default function EditProfile() {
               ))}
             </ul>
           </div>
+
           <div className="form-group">
             <label>
               <input
@@ -118,6 +142,7 @@ export default function EditProfile() {
               Usar NFC para armazenar o perfil
             </label>
           </div>
+
           <button className="btn" type="submit" disabled={saving}>
             {saving ? 'Salvando…' : 'Salvar Perfil'}
           </button>
