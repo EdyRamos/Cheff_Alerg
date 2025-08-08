@@ -17,9 +17,10 @@ export default function Intro() {
         <div className="page-content">
           <h1>Chef Alerg</h1>
           <p>
-            Você é o Chef Alerg, um detetive de alergias viajando pelo mundo
-            para proteger pessoas de ingredientes perigosos. Descubra o que é seguro
-            em cada fase e ajude a todos a comer sem medo!
+            Você é o Chef Alerg, um educador sobre glúten dedicado a mostrar
+            como identificá-lo e a importância dos rótulos “sem glúten”.
+            Em cada fase, oriente os jogadores a ler os rótulos com atenção
+            e a distinguir alimentos seguros dos que contêm glúten.
           </p>
           <button className="btn" onClick={handleStart}>Iniciar Missão</button>
           <button className="btn" onClick={handleSkip}>Pular</button>
