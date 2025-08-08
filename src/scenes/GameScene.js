@@ -35,6 +35,11 @@ export default class GameScene extends Phaser.Scene {
     this.lifeIcons = [];
     this.chef = null;
     this.hud = null;
+    // Counters and timers for contamination tracking
+    this.acertosSemContaminacao = 0;
+    this.errosContaminacao = 0;
+    this.tempoLeituraRotulo = [];
+    this.labelTimerStart = null;
   }
 
   preload() {
@@ -60,6 +65,8 @@ export default class GameScene extends Phaser.Scene {
     this.load.audio('bgMusic', this.music);
     this.load.audio('safeSound', '/assets/audio/safe.ogg');
     this.load.audio('allergenSound', '/assets/audio/allergen.ogg');
+    // Placeholder: reuse allergen sound until a dedicated gluten sound is available
+    this.load.audio('glutenSound', '/assets/audio/allergen.ogg');
   }
 
   create() {
@@ -287,13 +294,44 @@ export default class GameScene extends Phaser.Scene {
     }
   }
 
+  startLabelTimer() {
+    this.labelTimerStart = this.time.now;
+  }
+
+  recordLabelTime() {
+    if (this.labelTimerStart != null) {
+      const elapsed = (this.time.now - this.labelTimerStart) / 1000;
+      this.tempoLeituraRotulo.push(elapsed);
+      this.labelTimerStart = null;
+    }
+  }
+
   handleItemClick(sprite) {
+    // If a label reading timer is active, record elapsed time on selection
+    this.recordLabelTime();
     const item = sprite.getData('itemData');
     const bit = item.bitmaskBit;
     const isAllergen =
       typeof bit === 'number' && (this.bitmask & (1 << bit)) !== 0;
-    const correct = !isAllergen && !item.trap;
-    if (isAllergen) {
+    const { containsGluten, crossContamination } = item;
+    const correct =
+      !containsGluten &&
+      !crossContamination &&
+      !isAllergen &&
+      !item.trap;
+    if (containsGluten) {
+      this.animateChef('miss');
+      this.sound.play('glutenSound');
+      this.lives -= 1;
+      this.updateLives();
+      this.errosContaminacao += 1;
+    } else if (crossContamination) {
+      this.animateChef('miss');
+      this.sound.play('allergenSound');
+      this.score = Math.max(0, this.score - (item.penalty || 5));
+      this.updateScore();
+      this.errosContaminacao += 1;
+    } else if (isAllergen) {
       this.animateChef('miss');
       this.sound.play('allergenSound');
       this.lives -= 1;
@@ -310,6 +348,7 @@ export default class GameScene extends Phaser.Scene {
       this.sound.play('safeSound');
       this.score += 10 + bonus;
       this.updateScore();
+      this.acertosSemContaminacao += 1;
     }
 
     this.difficulty.record(correct);
@@ -398,7 +437,13 @@ export default class GameScene extends Phaser.Scene {
         fill: '#f00',
       })
       .setOrigin(0.5);
-    if (typeof this.onGameOver === 'function') this.onGameOver({ success });
+    if (typeof this.onGameOver === 'function')
+      this.onGameOver({
+        success,
+        acertosSemContaminacao: this.acertosSemContaminacao,
+        errosContaminacao: this.errosContaminacao,
+        tempoLeituraRotulo: this.tempoLeituraRotulo,
+      });
   }
 
   update() {
