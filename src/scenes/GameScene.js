@@ -45,7 +45,15 @@ export default class GameScene extends Phaser.Scene {
   preload() {
     const { phaseConfig } = this;
     phaseConfig.items.forEach((item) => {
+      // Always load the main sprite for the item
       this.load.image(item.key, item.spriteUrl);
+      // If the item defines a labelUrl property we load a separate image
+      // used for the zoomed label view. The key is suffixed with _label
+      // to avoid clashing with the regular sprite key. This enables a
+      // simple overlay when the player wants to inspect the product label.
+      if (item.labelUrl) {
+        this.load.image(`${item.key}_label`, item.labelUrl);
+      }
     });
     this.load.image('missing', '/assets/images/missing.png');
 
@@ -269,83 +277,174 @@ export default class GameScene extends Phaser.Scene {
     const { width, height } = this.scale;
     const base = Math.max(height, 320);
     const phaseConfig = this.phaseConfig;
+    // Randomly select an item definition from the phase configuration.
     const item = Phaser.Utils.Array.GetRandom(phaseConfig.items);
     const sizeRatio = phaseConfig.itemScale || 0.1;
     const itemSize = phaseConfig.itemSize || Math.max(base * sizeRatio, 32);
-    const x = Phaser.Math.Between(itemSize / 2, width - itemSize / 2);
-    const sprite = this.physics.add.image(x, -itemSize / 2, item.key);
-    sprite.setDisplaySize(itemSize, itemSize);
-    // Salva os valores de escala calculados pelo setDisplaySize antes de zerar a escala
-    const finalScaleX = sprite.scaleX;
-    const finalScaleY = sprite.scaleY;
-    // Inicia invisível para aplicar animação de aparição
-    sprite.setScale(0);
-    sprite.setData('itemData', item);
-    sprite.setVelocityY(100 * this.speed);
-    this.tweens.add({
-      targets: sprite,
-      scaleX: { from: 0, to: finalScaleX },
-      scaleY: { from: 0, to: finalScaleY },
-      duration: 300,
-      ease: 'Back.Out',
-    });
+
+    let sprite;
+    // Special handling for runner/horizontal items. Runner items travel across
+    // the screen horizontally instead of falling vertically. They are
+    // configured with a `runner` flag and optional `direction` and `speed`.
+    if (item.runner) {
+      // Determine horizontal spawn side based on direction (default to left).
+      const dir = item.direction === 'right' ? 1 : -1;
+      // Randomly choose a vertical position within the screen for horizontal items.
+      const y = Phaser.Math.Between(itemSize / 2, height - itemSize / 2);
+      const x = dir > 0 ? -itemSize / 2 : width + itemSize / 2;
+      sprite = this.physics.add.image(x, y, item.key);
+      sprite.setDisplaySize(itemSize, itemSize);
+      // Save final scale values and start invisible for a pop-in animation.
+      const finalScaleX = sprite.scaleX;
+      const finalScaleY = sprite.scaleY;
+      sprite.setScale(0);
+      sprite.setData('itemData', item);
+      // Set horizontal velocity based on configured speed or default. No vertical velocity.
+      const horizontalSpeed = item.speed || 150;
+      sprite.setVelocityX(horizontalSpeed * dir);
+      sprite.setVelocityY(0);
+      // Animate the item scaling in using a tween.
+      this.tweens.add({
+        targets: sprite,
+        scaleX: { from: 0, to: finalScaleX },
+        scaleY: { from: 0, to: finalScaleY },
+        duration: 300,
+        ease: 'Back.Out',
+      });
+    } else {
+      // Default behaviour for vertically falling items.
+      const x = Phaser.Math.Between(itemSize / 2, width - itemSize / 2);
+      sprite = this.physics.add.image(x, -itemSize / 2, item.key);
+      sprite.setDisplaySize(itemSize, itemSize);
+      const finalScaleX = sprite.scaleX;
+      const finalScaleY = sprite.scaleY;
+      sprite.setScale(0);
+      sprite.setData('itemData', item);
+      // Apply vertical velocity based on phase speed.
+      sprite.setVelocityY(100 * this.speed);
+      // Pop-in animation.
+      this.tweens.add({
+        targets: sprite,
+        scaleX: { from: 0, to: finalScaleX },
+        scaleY: { from: 0, to: finalScaleY },
+        duration: 300,
+        ease: 'Back.Out',
+      });
+    }
+
+    // Items are interactive so players can click/tap them.
     sprite.setInteractive();
     sprite.on('pointerdown', () => this.handleItemClick(sprite));
     this.activeItems.push(sprite);
   }
 
   handleItemClick(sprite) {
+    // Record how long the user spent reading the previous label (if any).
     this.recordLabelTime();
     const item = sprite.getData('itemData');
+    if (!item) return;
 
+    // Explosive items trigger an immediate penalty and shake effect. They are
+    // intentionally punishing and bypass normal gluten logic.
+    if (item.explosive) {
+      this.handleExplosive(sprite, item);
+      return;
+    }
+
+    // Items with a labelUrl require the player to read the label before
+    // classification occurs. We pause normal processing, display the label
+    // overlay and then continue classification after a short delay.
+    if (item.labelUrl) {
+      this.showLabel(item, sprite);
+      return;
+    }
+
+    // Standard items are processed immediately.
+    this.processItem(item, sprite);
+  }
+
+  /**
+   * Classify an item based on its properties and the player's allergen bitmask.
+   * Returns an outcome object describing the result. This helper centralises
+   * the logic used for all items (normal and after label inspection).
+   */
+  classifyItem(item) {
     const bit = item.bitmaskBit;
     const isAllergen = typeof bit === 'number' && (this.bitmask & (1 << bit)) !== 0;
     const { containsGluten, crossContamination } = item;
-
-    const correct = !containsGluten && !crossContamination && !isAllergen && !item.trap;
-
     if (containsGluten) {
-      this.animateChef('miss');
-      this.sound.play('glutenSound');
-      this.lives -= 1;
-      this.updateLives();
-      this.errosContaminacao += 1;
-      this.showTip();
-    } else if (crossContamination) {
-      this.animateChef('miss');
-      this.sound.play('allergenSound');
-      this.score = Math.max(0, this.score - (item.penalty || 5));
-      this.updateScore();
-      this.errosContaminacao += 1;
-      this.showTip();
-    } else if (isAllergen) {
-      this.animateChef('miss');
-      this.sound.play('allergenSound');
-      this.lives -= 1;
-      this.updateLives();
-      this.showTip();
-    } else if (item.trap) {
-      this.animateChef('miss');
-      this.sound.play('allergenSound');
-      this.score = Math.max(0, this.score - (item.penalty || 10));
-      this.updateScore();
-    } else {
-      const bonus = item.bonus || 0;
-      this.animateChef('collect');
-      this.sound.play('safeSound');
-      this.score += 10 + bonus;
-      this.updateScore();
-      this.acertosSemContaminacao += 1;
+      return { type: 'gluten' };
     }
+    if (crossContamination) {
+      return { type: 'contamination', penalty: item.penalty || 5 };
+    }
+    if (isAllergen) {
+      return { type: 'allergen' };
+    }
+    if (item.trap) {
+      return { type: 'trap', penalty: item.penalty || 10 };
+    }
+    return { type: 'correct', bonus: item.bonus || 0 };
+  }
 
+  /**
+   * Processes an item click after any optional label reading. Handles
+   * classification, scoring, life updates and removal. All normal item
+   * interactions ultimately flow through this helper.
+   */
+  processItem(item, sprite) {
+    const outcome = this.classifyItem(item);
+    // Determine whether the player was correct based on outcome
+    const correct = outcome.type === 'correct';
+    switch (outcome.type) {
+      case 'gluten':
+        this.animateChef('miss');
+        this.sound.play('glutenSound');
+        this.lives -= 1;
+        this.updateLives();
+        this.errosContaminacao += 1;
+        this.showTip();
+        break;
+      case 'contamination':
+        this.animateChef('miss');
+        this.sound.play('allergenSound');
+        this.score = Math.max(0, this.score - outcome.penalty);
+        this.updateScore();
+        this.errosContaminacao += 1;
+        this.showTip();
+        break;
+      case 'allergen':
+        this.animateChef('miss');
+        this.sound.play('allergenSound');
+        this.lives -= 1;
+        this.updateLives();
+        this.showTip();
+        break;
+      case 'trap':
+        this.animateChef('miss');
+        this.sound.play('allergenSound');
+        this.score = Math.max(0, this.score - outcome.penalty);
+        this.updateScore();
+        break;
+      case 'correct':
+      default:
+        this.animateChef('collect');
+        this.sound.play('safeSound');
+        this.score += 10 + (outcome.bonus || 0);
+        this.updateScore();
+        this.acertosSemContaminacao += 1;
+        break;
+    }
+    // Update difficulty based on correctness
     this.difficulty.record(correct);
     const params = this.difficulty.getParameters(this.baseSpawnRate, this.baseSimultaneous);
     this.spawnRate = params.spawnRate;
     this.simultaneous = params.simultaneous;
     if (this.spawnLoop) this.spawnLoop.delay = this.spawnRate;
 
+    // Safely remove the sprite with a fade/scale animation
     sprite.disableInteractive();
-    sprite.body.enable = false;
+    if (sprite.body) sprite.body.enable = false;
     this.activeItems = this.activeItems.filter((i) => i !== sprite);
     this.tweens.add({
       targets: sprite,
@@ -358,6 +457,78 @@ export default class GameScene extends Phaser.Scene {
           this.endGame();
         }
       },
+    });
+  }
+
+  /**
+   * Handles explosive items. These objects cause a bigger penalty and a
+   * visual effect. Explosive items ignore all other classification logic.
+   */
+  handleExplosive(sprite, item) {
+    // Penalise two lives by default when exploding
+    this.animateChef('miss');
+    this.sound.play('allergenSound');
+    const penaltyLives = item.penaltyLives || 2;
+    const penaltyScore = item.penalty || 15;
+    this.lives = Math.max(0, this.lives - penaltyLives);
+    this.updateLives();
+    this.score = Math.max(0, this.score - penaltyScore);
+    this.updateScore();
+    // Shake the camera to signal an explosion
+    if (this.cameras && this.cameras.main) {
+      this.cameras.main.shake(300, 0.03);
+    }
+    // Remove the explosive sprite after the effect
+    sprite.disableInteractive();
+    if (sprite.body) sprite.body.enable = false;
+    this.activeItems = this.activeItems.filter((i) => i !== sprite);
+    this.tweens.add({
+      targets: sprite,
+      scale: 0,
+      alpha: 0,
+      duration: 200,
+      onComplete: () => {
+        sprite.destroy();
+        if (this.lives <= 0) {
+          this.endGame();
+        }
+      },
+    });
+  }
+
+  /**
+   * Displays an overlay showing the product label image for items that
+   * define a `labelUrl`. The game briefly pauses classification while
+   * the player inspects the label. After a short delay the item is
+   * processed as usual via processItem().
+   */
+  showLabel(item, sprite) {
+    // Draw semi-transparent backdrop
+    const overlay = this.add.rectangle(
+      this.scale.width / 2,
+      this.scale.height / 2,
+      this.scale.width,
+      this.scale.height,
+      0x000000,
+      0.7
+    ).setDepth(50);
+    // Determine the key for the label image (loaded during preload)
+    const labelKey = `${item.key}_label`;
+    const labelImage = this.add.image(
+      this.scale.width / 2,
+      this.scale.height / 2,
+      labelKey
+    ).setDepth(51);
+    // Scale the label to fit within 80% of the viewport
+    const scaleX = (this.scale.width * 0.8) / labelImage.width;
+    const scaleY = (this.scale.height * 0.8) / labelImage.height;
+    const scale = Math.min(scaleX, scaleY);
+    labelImage.setScale(scale);
+    // After a brief period, remove overlay and process the item normally
+    this.time.delayedCall(2500, () => {
+      overlay.destroy();
+      labelImage.destroy();
+      this.processItem(item, sprite);
     });
   }
 
@@ -420,8 +591,15 @@ export default class GameScene extends Phaser.Scene {
   }
 
   update() {
+    // Remove any items that have moved completely off screen. This applies
+    // both to vertical items that fall past the bottom edge and horizontal
+    // runner items that travel beyond the left/right edges. Off-screen
+    // sprites are faded out and destroyed to free resources.
     this.activeItems.forEach((sprite) => {
-      if (sprite.y > this.scale.height + sprite.displayHeight / 2) {
+      const offBottom = sprite.y > this.scale.height + sprite.displayHeight / 2;
+      const offLeft = sprite.x < -sprite.displayWidth / 2;
+      const offRight = sprite.x > this.scale.width + sprite.displayWidth / 2;
+      if (offBottom || offLeft || offRight) {
         this.activeItems = this.activeItems.filter((i) => i !== sprite);
         this.tweens.add({
           targets: sprite,
