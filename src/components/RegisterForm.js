@@ -3,10 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { saveProfile } from '../services/firestore';
 import { saveNfcPreference } from '../utils/storage';
 import { arrayToBitmask } from '../utils/bitmask';
-import { ALLERGEN_NAMES } from '../constants/allergens';
 import PageLayout from './PageLayout';
-
-// Lista de alérgenos importada de src/constants/allergens.js. A ordem deve ser mantida.
 
 // Gera um UID simples combinando timestamp e número aleatório.
 const generateUid = () => {
@@ -21,18 +18,9 @@ export default function RegisterForm() {
   const navigate = useNavigate();
   const [nome, setNome] = useState('');
   const [idade, setIdade] = useState('');
-  const [selectedBits, setSelectedBits] = useState([]);
+  const [hasCeliac, setHasCeliac] = useState(false);
   const [useNfc, setUseNfc] = useState(false);
   const [saving, setSaving] = useState(false);
-
-  const toggleAlergeno = (index) => {
-    setSelectedBits((prev) => {
-      if (prev.includes(index)) {
-        return prev.filter((bit) => bit !== index);
-      }
-      return [...prev, index];
-    });
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -43,7 +31,7 @@ export default function RegisterForm() {
     setSaving(true);
     try {
       const uid = generateUid();
-      const bitmask = arrayToBitmask(selectedBits);
+      const bitmask = arrayToBitmask(hasCeliac ? [0] : []);
       const profile = {
         uid,
         nome: nome.trim(),
@@ -90,21 +78,14 @@ export default function RegisterForm() {
             </label>
           </div>
           <div className="form-group">
-            <strong>Selecione seus alérgenos:</strong>
-            <ul className="list-unstyled">
-              {ALLERGEN_NAMES.map((name, idx) => (
-                <li key={idx}>
-                  <label>
-                    <input
-                      type="checkbox"
-                      checked={selectedBits.includes(idx)}
-                      onChange={() => toggleAlergeno(idx)}
-                    />
-                    {name}
-                  </label>
-                </li>
-              ))}
-            </ul>
+            <label>
+              <input
+                type="checkbox"
+                checked={hasCeliac}
+                onChange={(e) => setHasCeliac(e.target.checked)}
+              />
+              Tenho doença celíaca (intolerância a glúten)
+            </label>
           </div>
           <div className="form-group">
             <label>

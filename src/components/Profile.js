@@ -3,12 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { loadProfile } from '../services/firestore';
 import { useStore } from '../store';
 import LoadingScreen from './LoadingScreen';
-import { ALLERGEN_NAMES } from '../constants/allergens';
 import NavBar from './NavBar';
 import PageLayout from './PageLayout';
 
 /**
- * Displays the saved user profile along with a list of allergens to avoid.
+ * Displays the saved user profile and whether the player has celiac disease.
  */
 export default function Profile() {
   const profile = useStore((s) => s.profile);
@@ -28,9 +27,8 @@ export default function Profile() {
     return <LoadingScreen />;
   }
 
-  // Compute a list of allergens from the bitmask for display.
-  const bitCount = profile.bitCount || ALLERGEN_NAMES.length;
-  const selected = ALLERGEN_NAMES.slice(0, bitCount).filter((_, idx) => (profile.bitmask & (1 << idx)) !== 0);
+  // Check whether the gluten bit (0) is set.
+  const isCeliac = (profile.bitmask & 1) !== 0;
 
   return (
     <>
@@ -45,9 +43,13 @@ export default function Profile() {
             <strong>Idade:</strong> {profile.idade}
           </p>
           <p>
-            <strong>Alérgenos selecionados:</strong>{' '}
-            {selected.length > 0 ? selected.join(', ') : 'Nenhum'}
+            <strong>Doença Celíaca:</strong> {isCeliac ? 'Sim' : 'Não'}
           </p>
+          {isCeliac && (
+            <p className="gluten-tip">
+              Opte por alimentos naturalmente sem glúten e evite contaminação cruzada.
+            </p>
+          )}
           <div className="flex-gap">
             <button className="btn" onClick={() => navigate('/modes')}>Selecionar Fase</button>
             <button className="btn" onClick={() => navigate('/profile/edit')}>Editar perfil</button>

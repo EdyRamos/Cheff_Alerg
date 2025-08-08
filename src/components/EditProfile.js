@@ -2,12 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { saveProfile } from '../services/firestore';
 import { saveNfcPreference } from '../utils/storage';
-import { arrayToBitmask, bitmaskToArray } from '../utils/bitmask';
+import { arrayToBitmask } from '../utils/bitmask';
 import { useStore } from '../store';
-import { ALLERGEN_NAMES } from '../constants/allergens';
 import PageLayout from './PageLayout';
-
-// Lista de alérgenos importada de src/constants/allergens.js. A ordem deve ser mantida.
 
 export default function EditProfile() {
   const navigate = useNavigate();
@@ -16,9 +13,7 @@ export default function EditProfile() {
 
   const [nome, setNome] = useState(profile?.nome || '');
   const [idade, setIdade] = useState(profile?.idade ?? '');
-  const [selectedBits, setSelectedBits] = useState(
-    profile ? bitmaskToArray(profile.bitmask, profile.bitCount || ALLERGEN_NAMES.length) : []
-  );
+  const [hasCeliac, setHasCeliac] = useState((profile.bitmask & 1) !== 0);
   const [useNfc, setUseNfc] = useState(false);
   const [saving, setSaving] = useState(false);
 
@@ -26,15 +21,6 @@ export default function EditProfile() {
     navigate('/register');
     return null;
   }
-
-  const toggleAlergeno = (index) => {
-    setSelectedBits((prev) => {
-      if (prev.includes(index)) {
-        return prev.filter((bit) => bit !== index);
-      }
-      return [...prev, index];
-    });
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,7 +30,7 @@ export default function EditProfile() {
     }
     setSaving(true);
     try {
-      const bitmask = arrayToBitmask(selectedBits);
+      const bitmask = arrayToBitmask(hasCeliac ? [0] : []);
       const updated = {
         ...profile,
         nome: nome.trim(),
@@ -92,21 +78,14 @@ export default function EditProfile() {
             </label>
           </div>
           <div className="form-group">
-            <strong>Selecione seus alérgenos:</strong>
-            <ul className="list-unstyled">
-              {ALLERGEN_NAMES.map((name, idx) => (
-                <li key={idx}>
-                  <label>
-                    <input
-                      type="checkbox"
-                      checked={selectedBits.includes(idx)}
-                      onChange={() => toggleAlergeno(idx)}
-                    />
-                    {name}
-                  </label>
-                </li>
-              ))}
-            </ul>
+            <label>
+              <input
+                type="checkbox"
+                checked={hasCeliac}
+                onChange={(e) => setHasCeliac(e.target.checked)}
+              />
+              Tenho doença celíaca (intolerância a glúten)
+            </label>
           </div>
           <div className="form-group">
             <label>
