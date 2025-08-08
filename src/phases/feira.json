@@ -6,7 +6,8 @@
     "audio": "/assets/audio/safe.ogg",
     "duration": 4000,
     "skipAfter": 2000,
-    "animation": "slide"
+    "animation": "slide",
+    "instructions": "Na Feira, colete frutas e legumes seguros. Evite itens com glúten como pães, trigo e produtos que possam estar contaminados. Fique atento aos ícones explosivos e itens bônus passando!"
   },
   "background": "/assets/images/bg/feira_day.png",
   "music": "/assets/audio/background.ogg",
@@ -30,7 +31,8 @@
     {
       "key": "bread",
       "spriteUrl": "/assets/images/items/bread.png",
-      "containsGluten": true
+      "containsGluten": true,
+      "labelUrl": "/assets/images/items/bread.png"
     },
     {
       "key": "wheat",

@@ -6,7 +6,8 @@
     "audio": "/assets/audio/safe.ogg",
     "duration": 3000,
     "skipAfter": 2000,
-    "tip": "Dica: procure rótulos 'sem glúten' nos produtos!"
+    "tip": "Dica: procure rótulos 'sem glúten' nos produtos!",
+    "instructions": "No Supermercado, leia atentamente os rótulos e clique apenas em produtos sem glúten. Itens com selo 'sem glúten' são seguros. Tenha cuidado com contaminação cruzada e com itens explosivos!"
   },
   "background": "/assets/images/bg/supermercado.png",
   "music": "/assets/audio/background.ogg",
@@ -50,6 +51,12 @@
       "key": "pineapple",
       "spriteUrl": "/assets/images/items/pineapple.png",
       "bonus": 15
+    },
+    {
+      "key": "hazelnut",
+      "spriteUrl": "/assets/images/items/hazelnut.png",
+      "explosive": true,
+      "penalty": 15
     }
   ],
   "tips": [

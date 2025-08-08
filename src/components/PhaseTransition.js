@@ -56,7 +56,7 @@ export default function PhaseTransition() {
   if (!config) return null;
 
   const transition = { ...DEFAULT_TRANSITION, ...(config.transition || {}) };
-  const { text, image, tip, animation, video } = transition;
+  const { text, image, tip, animation, video, instructions } = transition;
 
   return (
     <TransitionScreen
@@ -74,6 +74,7 @@ export default function PhaseTransition() {
           />
         )}
         {text && <h2>{text}</h2>}
+        {instructions && <p style={{ fontStyle: 'italic' }}>{instructions}</p>}
         {tip && <p>{tip}</p>}
         {allowSkip && (
           <button className="btn" onClick={handleSkip} style={{ marginTop: '1rem' }}>

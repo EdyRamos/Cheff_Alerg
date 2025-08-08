@@ -7,7 +7,8 @@
     "audio": "/assets/audio/safe.ogg",
     "duration": 3000,
     "skipAfter": 2000,
-    "tip": "Dica: empanados de praia podem conter farinha!"
+    "tip": "Dica: empanados de praia podem conter farinha!",
+    "instructions": "Na Praia, muita comida frita é empanada com farinha de trigo. Clique apenas em frutas frescas e bebidas seguras. Alguns itens podem mover-se rapidamente trazendo bônus ou armadilhas."
   },
   "background": "/assets/images/bg/praia.png",
   "music": "/assets/audio/beach_loop.mp3",
