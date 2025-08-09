@@ -86,7 +86,7 @@ export default class GameScene extends Phaser.Scene {
     const base = Math.max(height, 320);
     const { phaseConfig, engine } = this;
 
-    const chefSize = Math.max(base * 0.15, 32);
+    const chefSize = Math.max(base * 0.3, 32);
     this.hud = getHUDConfig(width, height, chefSize);
     const { margin, iconSize, textStyle } = this.hud;
 
@@ -209,7 +209,7 @@ export default class GameScene extends Phaser.Scene {
   handleResize(gameSize) {
     const { width, height } = gameSize;
     const base = Math.max(height, 320);
-    const chefSize = Math.max(base * 0.15, 32);
+    const chefSize = Math.max(base * 0.3, 32);
 
     this.hud = getHUDConfig(width, height, chefSize);
     const { margin, iconSize, textStyle } = this.hud;
