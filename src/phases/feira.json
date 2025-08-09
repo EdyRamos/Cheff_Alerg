@@ -15,7 +15,7 @@
   "itemSpawnRate": 1600,
   "duration": 60,
   "simultaneous": 1,
-  "itemScale": 0.07,
+  "itemScale": 0.15,
   "items": [
     {
       "key": "apple",

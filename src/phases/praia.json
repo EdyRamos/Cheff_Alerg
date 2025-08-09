@@ -16,7 +16,7 @@
   "itemSpawnRate": 700,
   "duration": 90,
   "simultaneous": 4,
-  "itemScale": 0.07,
+  "itemScale": 0.15,
   "items": [
     {
       "key": "shrimp",
